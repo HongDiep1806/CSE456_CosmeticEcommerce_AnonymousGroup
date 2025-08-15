@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -103,34 +104,31 @@ public class productcontroller {
             return "admin/apps-ecommerce-add-product";
         }
 
-        MultipartFile image = productsdto.getProductMainImage();
-        String storagefilename = image.getOriginalFilename();
-
-        String uploaddir = "C:\\Users\\Admin\\Downloads\\Cosmetic\\projectB_cse311\\demo\\src\\main\\resources\\static\\productimages";
-
-        Path uploadpath = Paths.get(uploaddir);
+        // Thư mục productimages khi app đang chạy (localhost)
+        String uploadDir = new File("uploads/productimages").getAbsolutePath();
+        Path uploadPath = Paths.get(uploadDir);
 
         try {
-            if (!Files.exists(uploadpath)) {
-                Files.createDirectories(uploadpath);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
             }
-
-            try (InputStream inputStream = image.getInputStream()) {
-                Path targetPath = uploadpath.resolve(storagefilename);
-
-                if (!Files.exists(targetPath)) {
-                    Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
-                } else {
-                    System.out.println("File already exists: " + targetPath.toString());
-                }
-            }
-
         } catch (IOException e) {
-            System.out.println("Error occurred while saving image: " + e.getMessage());
-            result.addError(new FieldError("productsdto", "ProductMainImage", "Unable to save the image. Try again."));
+            result.addError(new FieldError("productsdto", "ProductMainImage", "Unable to create upload directory."));
             return "admin/apps-ecommerce-add-product";
         }
 
+        // ==== Lưu ảnh chính ====
+        MultipartFile image = productsdto.getProductMainImage();
+        String storageFilename = image.getOriginalFilename();
+
+        try (InputStream inputStream = image.getInputStream()) {
+            Files.copy(inputStream, uploadPath.resolve(storageFilename), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            result.addError(new FieldError("productsdto", "ProductMainImage", "Unable to save the main image."));
+            return "admin/apps-ecommerce-add-product";
+        }
+
+        // Lưu thông tin sản phẩm
         products pro = new products();
         pro.setProductId(productsdto.getProductId());
         pro.setProductName(productsdto.getProductName());
@@ -138,25 +136,21 @@ public class productcontroller {
         pro.setProductDescription(productsdto.getProductDescription());
         pro.setProductCategory(productsdto.getProductCategory());
         pro.setProductQuantity(productsdto.getProductQuantity());
-        pro.setProductMainImage(storagefilename);
+        pro.setProductMainImage(storageFilename);
         pro.setProductStatus(productsdto.getProductStatus());
 
         products savedProduct = productrepo.save(pro);
-        
+
+        // ==== Lưu gallery images ====
         List<MultipartFile> galleryImages = productsdto.getProductOtherImages();
         if (galleryImages != null && !galleryImages.isEmpty()) {
             for (MultipartFile galleryImage : galleryImages) {
-                if (galleryImage.isEmpty()) {
-                    continue;
-                }
+                if (galleryImage.isEmpty()) continue;
 
                 String galleryImageFilename = galleryImage.getOriginalFilename();
-                Path galleryImagePath = uploadpath.resolve(galleryImageFilename);
 
                 try (InputStream inputStream = galleryImage.getInputStream()) {
-                    if (!Files.exists(galleryImagePath)) {
-                        Files.copy(inputStream, galleryImagePath, StandardCopyOption.REPLACE_EXISTING);
-                    }
+                    Files.copy(inputStream, uploadPath.resolve(galleryImageFilename), StandardCopyOption.REPLACE_EXISTING);
 
                     productotherimages productImage = new productotherimages();
                     productImage.setProduct(savedProduct);
@@ -166,12 +160,11 @@ public class productcontroller {
                     System.out.println("Error saving gallery image: " + e.getMessage());
                 }
             }
-        } else {
-            System.out.println("No gallery images provided.");
         }
 
         return "redirect:/admin/apps-ecommerce-products";
     }
+
 
     @GetMapping("/set-current-product-id/{id}")
     public String setCurrentProductId(@PathVariable("id") int id, HttpSession session) {
@@ -227,7 +220,7 @@ public class productcontroller {
     @PostMapping("/apps-ecommerce-edit-product")
     public String saveEditedProduct(@ModelAttribute("productsdto") productsdto productsdto,
             @RequestParam(value = "imagesToDelete", required = false) String imagesToDelete,
-            BindingResult result) {
+            BindingResult result) throws IOException {
         if (result.hasErrors()) {
             return "admin/apps-ecommerce-edit-product";
         }
@@ -238,8 +231,12 @@ public class productcontroller {
             return "admin/apps-ecommerce-edit-product";
         }
 
-        String uploadDir = "C:\\Users\\Admin\\Downloads\\Cosmetic\\projectB_cse311\\demo\\src\\main\\resources\\static\\productimages";
+        String uploadDir = new File("uploads/productimages").getAbsolutePath();
         Path uploadPath = Paths.get(uploadDir);
+
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
 
         // Handle main product image
         MultipartFile image = productsdto.getProductMainImage();
