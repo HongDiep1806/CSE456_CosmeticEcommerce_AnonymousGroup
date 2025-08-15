@@ -1,0 +1,120 @@
+<!doctype html>
+<html class="no-js" lang="en" xmlns:th="https://www.thymeleaf.org/">
+
+
+<head th:replace="~{user/layout :: pageHead('Blog Details')}">
+
+</head>
+
+<body>
+
+    <div th:replace="~{user/layout :: body}">
+        <section th:fragment="mainContent">
+            <!--breadcrumbs area start-->
+            <div class="breadcrumbs_area">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="breadcrumb_content">
+                                <h3>Blog</h3>
+                                <ul>
+                                    <li><a href="/user/index">home</a></li>
+                                    <li>blog details</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--breadcrumbs area end-->
+            <!--blog body area start-->
+            <div class="blog_details">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-10 offset-lg-1 col-md-12">
+                            <!--blog grid area start-->
+                            <div class="blog_wrapper blog_wrapper_details">
+                                <article class="single_blog" th:each="blog : ${blogs}">
+                                    <figure>
+                                        <div class="post_header">
+                                            <h3 class="post_title">[[${blog.BlogTitle}]]</h3>
+                                            <div class="blog_meta">
+                                                <p>Posted by : <span th:text="${blog.BlogPostBy}"></span> / On :
+                                                    <span th:text="${blog.BlogCreateDate}"></span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="text-center">
+                                            <img th:src="@{'/blogimages/'+${blog.BlogImage}}" class="img-fluid" alt="">
+                                        </div>
+                                        <figcaption class="blog_content">
+                                            <div class="post_content">
+                                                <p th:utext="${blog.BlogDescription}"></p>
+                                            </div>
+                                            <div class="entry_content">
+                                                <div class="post_meta">
+                                                    <span>Tags: </span>
+                                                    <span><a href="#">[[${blog.Blogtag}]]</a></span>
+                                                </div>
+
+                                                <div class="social_sharing">
+                                                    <p>share this post:</p>
+                                                    <ul>
+                                                        <li><a href="#" title="facebook"><i
+                                                                    class="fa fa-facebook"></i></a></li>
+                                                        <li><a href="#" title="twitter"><i
+                                                                    class="fa fa-twitter"></i></a></li>
+                                                        <li><a href="#" title="pinterest"><i
+                                                                    class="fa fa-pinterest"></i></a></li>
+                                                        <li><a href="#" title="google+"><i
+                                                                    class="fa fa-google-plus"></i></a></li>
+                                                        <li><a href="#" title="linkedin"><i
+                                                                    class="fa fa-linkedin"></i></a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </figcaption>
+                                    </figure>
+                                </article>
+                                <div class="related_posts">
+                                    <h3>Recent posts</h3>
+                                    <div class="row">
+                                        <div class="col-lg-4 col-md-4 col-sm-6" th:each="recentBlog : ${recentBlogs}">
+                                            <article class="single_related">
+                                                <figure>
+                                                    <div class="related_thumb">
+                                                        <a th:href="@{/user/blog-details/{id}(id=${recentBlog.BlogId})}"><img
+                                                                th:src="@{'/blogimages/'+${recentBlog.BlogImage}}"
+                                                                alt=""></a>
+                                                    </div>
+                                                    <figcaption class="related_content">
+                                                        <h4><a
+                                                                th:href="@{/user/blog-details/{id}(id=${recentBlog.BlogId})}" th:text="${#strings.abbreviate(recentBlog.BlogTitle, 45)}"></a>
+                                                        </h4>
+                                                        <div class="blog_meta">
+                                                            <span class="author">By : [[${recentBlog.BlogPostBy}]] /
+                                                            </span>
+                                                            <span class="meta_date"> [[${recentBlog.BlogCreateDate}]]
+                                                            </span>
+                                                        </div>
+                                                    </figcaption>
+                                                </figure>
+                                            </article>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--blog grid area start-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--blog section area end-->
+
+        </section>
+    </div>
+
+</body>
+
+
+</html>

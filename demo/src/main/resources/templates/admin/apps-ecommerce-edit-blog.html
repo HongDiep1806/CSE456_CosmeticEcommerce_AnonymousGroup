@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg"
+    data-sidebar-image="none" data-preloader="disable" xmlns:th="http://www.thymeleaf.org">
+
+
+<head th:replace="admin/layout :: pageHead('Edit Blog')">
+
+</head>
+
+<body>
+
+    <div th:replace="admin/layout :: body">
+        <section th:fragment="mainContent">
+            <div class="page-content">
+                <div class="container-fluid">
+                    <!-- start page title -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                                <h4 class="mb-sm-0">Edit Blog</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end page title -->
+                    <form id="createblog-form" autocomplete="off" class="needs-validation" novalidate=""
+                        enctype="multipart/form-data" method="post" th:object="${blogsdto}"
+                        th:action="@{/admin/apps-ecommerce-edit-blog}">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="mb-3 d-none">
+                                            <label class="form-label" for="blog-title-input">Blog ID</label>
+                                            <input type="hidden" class="form-control" id="formAction" name="formAction"
+                                                value="add">
+                                            <input type="text" class="form-control d-none" id="blog-id-input">
+                                            <input type="text" class="form-control" id="blog-title-input" value=""
+                                                placeholder="Enter blog ID" required="" th:field="*{BlogId}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="blog-title-input">Title</label>
+                                            <input type="hidden" class="form-control" id="formAction" name="formAction"
+                                                value="add">
+                                            <input type="text" class="form-control d-none" id="blog-id-input">
+                                            <input type="text" class="form-control" id="blog-title-input" value=""
+                                                placeholder="Enter blog title" required="" th:field="*{BlogTitle}">
+                                            <div class="invalid-feedback">Please Enter a blog title.</div>
+                                        </div>
+                                        <div>
+                                            <label for="product-description-input">Description</label>
+                                            <textarea id="product-description-input" name="description"
+                                                class="form-control" placeholder="Enter product description" required=""
+                                                th:field="*{BlogDescription}"></textarea>
+                                            <div class="invalid-feedback">Please Enter a blog description.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- end card -->
+
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">Featured Blog Image</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="container mt-4">
+                                            <h5 class="fs-14 mb-1">Blog Image</h5>
+                                            <p class="text-muted">Add Blog Image.</p>
+                                            <div class="text-center">
+                                                <div class="position-relative d-inline-block">
+                                                    <div class="position-absolute top-100 start-100 translate-middle">
+                                                        <label for="product-image-input" class="mb-0">
+                                                            <div class="avatar-xs">
+                                                                <div
+                                                                    class="avatar-title bg-light border rounded-circle text-muted cursor-pointer">
+                                                                    <i class="ri-image-fill"></i>
+                                                                </div>
+                                                            </div>
+                                                        </label>
+                                                        <input class="form-control d-none" id="product-image-input"
+                                                            type="file" accept="image/png, image/gif, image/jpeg"
+                                                            th:field="*{BlogImage}" onchange="previewMainImage(event)">
+                                                    </div>
+                                                    <div class="avatar-lg">
+                                                        <div class="avatar-title bg-light rounded">
+                                                            <img th:src="${existingImage}" id="blog-img"
+                                                                class="img-fluid" alt="Image"
+                                                                style="max-height: 200px; width: auto; display: block;">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- end card -->
+                                <div class="text-end mb-3">
+                                    <button type="submit" class="btn btn-success w-sm">Submit</button>
+                                </div>
+                            </div>
+
+                            <!-- end col -->
+
+                            <div class="col-lg-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">General Info</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="author-input">Author ID</label>
+                                            <input type="text" class="form-control" id="author-input"
+                                                placeholder="Enter an author id" th:value="${loggedInAdminName}"
+                                                readonly>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="tag-input">Tag</label>
+                                            <input type="text" class="form-control" id="tag-input"
+                                                placeholder="Enter tags" required="" th:field="*{Blogtag}">
+                                            <div class="invalid-feedback">Please Enter tags.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- end card body -->
+                                </div>
+                                <!-- end card -->
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">Publish</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="choices-publish-status-input" class="form-label">Status</label>
+
+                                            <select class="form-select" id="choices-publish-status-input"
+                                                data-choices="" data-choices-search-false="" th:field="*{BlogStatus}">
+                                                <option value="Published" selected="">Published</option>
+                                                <option value="Hidden">Hidden</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="datepicker-publish-input" class="form-label">Publish Date
+                                                &amp;
+                                                Time</label>
+                                            <input type="text" id="datepicker-publish-input" class="form-control"
+                                                placeholder="Enter publish date" data-provider="flatpickr"
+                                                data-date-format="d.m.y" data-enable-time="" readonly
+                                                th:field="*{BlogCreateDate}">
+                                        </div>
+
+                                    </div>
+                                    <!-- end card body -->
+                                </div>
+                                <!-- end card -->
+                            </div>
+                            <!-- end col -->
+                        </div>
+                        <!-- end row -->
+
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Get the current date and format it as 'yyyy-MM-dd'
+        const formattedDate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(new Date().getDate()).padStart(2, '0')}`;
+
+        // Set the value of the input field
+        document.getElementById('datepicker-publish-input').value = formattedDate;
+
+        function previewMainImage(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const img = document.getElementById('blog-img');
+                img.src = e.target.result;
+                img.style.display = 'block';
+            };
+
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
+
+        document.getElementById('createblog-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            let isValid = true;
+
+            if (isValid) {
+                this.submit();
+            } else {
+                this.classList.add('was-validated');
+            }
+        });
+    </script>
+
+</body>
+
+
+</html>

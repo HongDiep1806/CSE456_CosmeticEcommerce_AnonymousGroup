@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg"
+    data-sidebar-image="none" data-preloader="disable" xmlns:th="http://www.thymeleaf.org">
+
+
+<head th:replace="~{admin/layout :: pageHead('Edit Product')}">
+
+</head>
+
+<body>
+
+    <div th:replace="~{admin/layout :: body}">
+        <section th:fragment="mainContent">
+            <div class="page-content">
+                <div class="container-fluid">
+                    <!-- start page title -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                                <h4 class="mb-sm-0">Edit Product</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end page title -->
+
+                    <form id="createproduct-form" autocomplete="off" class="needs-validation" novalidate=""
+                        method="post" enctype="multipart/form-data" th:object="${productsdto}"
+                        th:action="@{/admin/apps-ecommerce-edit-product}">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="mb-3 d-none">
+                                            <label class="form-label" for="product-title-input">Product ID</label>
+                                            <input type="hidden" class="form-control" id="formAction" name="formAction"
+                                                value="add">
+                                            <input type="text" class="form-control d-none" id="product-id-input">
+                                            <input type="text" class="form-control" id="product-title-input" value=""
+                                                placeholder="Enter product ID" required="" th:field="*{ProductId}"
+                                                readonly>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="product-title-input">Product Name</label>
+                                            <input type="hidden" class="form-control" id="formAction" name="formAction"
+                                                value="add">
+                                            <input type="text" class="form-control d-none" id="product-id-input">
+                                            <input type="text" class="form-control" id="product-title-input" value=""
+                                                placeholder="Enter product title" required="" th:field="*{ProductName}">
+                                            <div class="invalid-feedback">Please Enter a product name.</div>
+                                        </div>
+                                        <div>
+                                            <label for="product-description-input">Product Description</label>
+                                            <textarea id="product-description-input" name="description"
+                                                class="form-control" placeholder="Enter product description" required=""
+                                                th:field="*{ProductDescription}" rows="5"></textarea>
+                                            <div class="invalid-feedback">Please Enter a product description.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- end card -->
+
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">Featured Product Images</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="container mt-4">
+                                            <h5 class="fs-14 mb-1">Product Main Image</h5>
+                                            <p class="text-muted">Add a main image for the product.</p>
+                                            <div class="text-center">
+                                                <div class="position-relative d-inline-block">
+                                                    <div class="position-absolute top-100 start-100 translate-middle">
+                                                        <label for="product-image-input" class="mb-0">
+                                                            <div class="avatar-xs">
+                                                                <div
+                                                                    class="avatar-title bg-light border rounded-circle text-muted cursor-pointer">
+                                                                    <i class="ri-image-fill"></i>
+                                                                </div>
+                                                            </div>
+                                                        </label>
+                                                        <input class="form-control d-none" id="product-image-input"
+                                                            type="file" accept="image/png, image/gif, image/jpeg"
+                                                            th:field="*{ProductMainImage}"
+                                                            onchange="previewMainImage(event)" required>
+                                                    </div>
+                                                    <div class="avatar-lg">
+                                                        <div class="avatar-title bg-light rounded">
+                                                            <img th:src="${existingImage}" id="product-img"
+                                                                class="img-fluid" alt="Main Product Image"
+                                                                style="max-height: 200px; width: auto; display: block;">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-4">
+                                                <h5 class="fs-14 mb-1">Product Gallery</h5>
+                                                <p class="text-muted">Add additional images for the product.</p>
+
+                                                <div class="dropzone">
+                                                    <div class="fallback">
+                                                        <input type="file" multiple
+                                                            accept="image/png, image/gif, image/jpeg"
+                                                            th:field="*{ProductOtherImages}"
+                                                            id="product-other-images-input" style="display: none;"
+                                                            onchange="updateGalleryImages(this.files)" required>
+                                                    </div>
+                                                    <div class="dz-message needsclick text-center"
+                                                        onclick="document.getElementById('product-other-images-input').click();">
+                                                        <div class="mb-3">
+                                                            <i class="display-4 text-muted ri-upload-cloud-2-fill"
+                                                                style="cursor: pointer;"></i>
+                                                        </div>
+                                                        <h5>Drop files here or click to upload.</h5>
+                                                    </div>
+                                                </div>
+                                                <input type="hidden" id="images-to-delete" name="imagesToDelete"
+                                                    value="">
+
+                                                <div id="image-preview-container" class="mt-3 d-flex flex-wrap">
+                                                    <!-- Existing images will be displayed here -->
+                                                    <div class="position-relative me-2 mb-2"
+                                                        th:each="image : ${galleryImageUrls}">
+                                                        <img th:src="@{${image}}" class="img-thumbnail"
+                                                            alt="Gallery Image">
+                                                        <button
+                                                            class="btn btn-danger btn-sm position-absolute top-0 end-0"
+                                                            th:attr="onclick='removeImage(this, &quot;'+${image}+'&quot;)'">
+                                                            <i class="ri-delete-bin-5-fill"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- end card -->
+                                <div class="text-end mb-3">
+                                    <button type="submit" class="btn btn-success w-sm">Submit</button>
+                                </div>
+                            </div>
+                            <!-- end col -->
+
+                            <div class="col-lg-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">General Info</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="stocks-input">Quantity</label>
+                                            <input type="text" class="form-control" id="stocks-input"
+                                                placeholder="Stocks" required="" th:field="*{ProductQuantity}">
+                                            <div class="invalid-feedback">Please Enter a product stocks.
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="product-price-input">Price</label>
+                                            <div class="input-group has-validation mb-3">
+                                                <span class="input-group-text" id="product-price-addon">$</span>
+                                                <input type="text" class="form-control" id="product-price-input"
+                                                    placeholder="Enter price" aria-label="Price"
+                                                    aria-describedby="product-price-addon" required=""
+                                                    th:field="*{ProductPrice}">
+                                                <div class="invalid-feedback">Please Enter a product
+                                                    price.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- end card body -->
+                                </div>
+                                <!-- end card -->
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">Publish</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="choices-publish-status-input" class="form-label">Status</label>
+                                            <select class="form-select" id="choices-publish-status-input" name="status"
+                                                data-choices="" data-choices-search-false=""
+                                                th:field="*{ProductStatus}">
+                                                <option value="Active">Active</option>
+                                                <option value="Block">Block</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="datepicker-publish-input" class="form-label">Publish Date &
+                                                Time</label>
+                                            <input type="text" id="datepicker-publish-input" class="form-control"
+                                                placeholder="Enter publish date" data-provider="flatpickr"
+                                                data-date-format="yyyy-MM-dd" data-enable-time=""
+                                                th:field="*{CreateTime}" readonly>
+                                        </div>
+
+                                    </div>
+                                    <!-- end card body -->
+                                </div>
+                                <!-- end card -->
+
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">Product Categories</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="text-muted mb-2">Select product category</p>
+                                        <select class="form-select" id="choices-category-input"
+                                            name="choices-category-input" data-choices="" th:field="*{ProductCategory}"
+                                            data-choices-search-false="">
+                                            <option th:each="category : ${categories}"
+                                                th:if="${category.CategoryStatus}" th:value="${category.CategoryName}"
+                                                th:text="${category.CategoryName}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <!-- end card body -->
+                                </div>
+                                <!-- end card -->
+                            </div>
+                            <!-- end col -->
+                        </div>
+                        <!-- end row -->
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script>
+        function previewMainImage(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const img = document.getElementById('product-img');
+                img.src = e.target.result;
+                img.style.display = 'block';
+            };
+
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function updateGalleryImages(files) {
+            const imagePreviewContainer = document.getElementById('image-preview-container');
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    const imgDiv = document.createElement('div');
+                    imgDiv.className = 'position-relative me-2 mb-2';
+                    imgDiv.innerHTML = `
+                <img src="${e.target.result}" class="img-thumbnail" alt="Gallery Image">
+                <button class="btn btn-danger btn-sm position-absolute top-0 end-0"
+                        onclick="removeImage(this, '${file.name}')">
+                    <i class="ri-delete-bin-5-fill"></i>
+                </button>
+            `;
+                    imagePreviewContainer.appendChild(imgDiv);
+                };
+
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeImage(button, imageName) {
+            const imageDiv = button.parentElement;
+            imageDiv.remove();
+
+            const imagesToDeleteInput = document.getElementById('images-to-delete');
+            let imagesToDelete = imagesToDeleteInput.value.split(',').filter(Boolean);
+            imagesToDelete.push(imageName);
+            imagesToDeleteInput.value = imagesToDelete.join(',');
+            console.log(imagesToDeleteInput.value);
+        }
+
+        document.getElementById('createproduct-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            let isValid = true;
+
+            const quantityInput = document.getElementById('stocks-input');
+            const priceInput = document.getElementById('product-price-input');
+
+            if (quantityInput.value < 1) {
+                quantityInput.classList.add('is-invalid');
+                quantityInput.nextElementSibling.textContent = 'Please enter a quantity greater than zero.';
+                isValid = false;
+            } else {
+                quantityInput.classList.remove('is-invalid');
+            }
+
+            if (priceInput.value <= 0) {
+                priceInput.classList.add('is-invalid');
+                priceInput.nextElementSibling.textContent = 'Please enter a price greater than zero.';
+                isValid = false;
+            } else {
+                priceInput.classList.remove('is-invalid');
+            }
+
+            if (isValid) {
+                this.submit();
+            } else {
+                this.classList.add('was-validated');
+            }
+        });
+    </script>
+</body>
+
+
+</html>

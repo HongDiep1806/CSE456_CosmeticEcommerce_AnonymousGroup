@@ -1,0 +1,112 @@
+<!doctype html>
+<html class="no-js" lang="en" xmlns:th="https://www.thymeleaf.org/">
+
+
+<head th:replace="~{user/layout :: pageHead('Blog')}">
+
+</head>
+
+<body>
+
+    <div th:replace="~{user/layout :: body}">
+        <section th:fragment="mainContent">
+            <!--breadcrumbs area start-->
+            <div class="breadcrumbs_area">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="breadcrumb_content">
+                                <h3>blog</h3>
+                                <ul>
+                                    <li><a href="/user/index">home</a></li>
+                                    <li>blog</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--breadcrumbs area end-->
+            <!--blog area start-->
+            <div class="blog_page_section mb-60">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <div class="blog_wrapper">
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-6" th:each="blog : ${blogs}">
+                                        <article class="single_blog">
+                                            <figure>
+                                                <div class="blog_thumb">
+                                                    <a th:href="@{/user/blog-details/{id}(id=${blog.BlogId})}">
+                                                        <img th:src="@{'/blogimages/' + ${blog.BlogImage}}" alt=""></a>
+                                                </div>
+                                                <figcaption class="blog_content">
+                                                    <h4 class="post_title"><a
+                                                            th:href="@{/user/blog-details/{id}(id=${blog.BlogId})}"
+                                                            th:text="${#strings.abbreviate(blog.BlogTitle, 30)}">
+                                                        </a></h4>
+                                                    <p th:utext="${#strings.abbreviate(blog.BlogDescription, 100)}">...
+                                                    </p>
+                                                    <footer class="blog_footer">
+                                                        <a th:href="@{/user/blog-details/{id}(id=${blog.BlogId})}">Read
+                                                            More</a>
+                                                    </footer>
+                                                </figcaption>
+                                            </figure>
+                                        </article>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pagination">
+                        <ul>
+                            <!-- Previous button -->
+                            <li th:if="${currentPage > 0}">
+                                <a th:href="@{'/user/blog'(page=${currentPage - 1})}">
+                                    <<< /a>
+                            </li>
+
+                            <!-- First page link -->
+                            <li th:if="${currentPage > 2}">
+                                <a th:href="@{'/user/blog'(page=0)}">1</a>
+                            </li>
+
+                            <!-- Ellipsis if needed after the first page -->
+                            <li th:if="${currentPage > 2}">
+                                <span>...</span>
+                            </li>
+
+                            <!-- Show page numbers around the current page -->
+                            <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                                th:if="${i >= currentPage - 1 && i <= currentPage + 1}"
+                                th:classappend="${i == currentPage} ? 'current'">
+                                <a th:href="@{'/user/blog'(page=${i})}" th:text="${i + 1}"></a>
+                            </li>
+
+                            <!-- Ellipsis if needed before the last page -->
+                            <li th:if="${currentPage < totalPages - 3}">
+                                <span>...</span>
+                            </li>
+
+                            <!-- Last page link -->
+                            <li th:if="${currentPage < totalPages - 2}">
+                                <a th:href="@{'/user/blog'(page=${totalPages - 1})}" th:text="${totalPages}"></a>
+                            </li>
+
+                            <!-- Next button -->
+                            <li th:if="${currentPage < totalPages - 1}">
+                                <a th:href="@{'/user/blog'(page=${currentPage + 1})}">>></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!--blog area end-->
+        </section>
+    </div>
+</body>
+
+
+</html>

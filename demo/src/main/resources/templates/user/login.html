@@ -1,0 +1,123 @@
+<!doctype html>
+<html class="no-js" lang="en" xmlns:th="https://www.thymeleaf.org/">
+
+<head th:replace="~{user/layout :: pageHead('Login')}">
+</head>
+
+<body>
+
+    <div th:replace="~{user/layout :: body}">
+        <section th:fragment="mainContent">
+
+            <!--breadcrumbs area start-->
+            <div class="breadcrumbs_area">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="breadcrumb_content">
+                                <h3>login</h3>
+                                <ul>
+                                    <li><a href="/user/index">home</a></li>
+                                    <li>login</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--breadcrumbs area end-->
+
+            <!-- customer login start -->
+            <div class="customer_login">
+                <div class="container">
+                    <div class="row">
+                        <!--login area start-->
+                        <div class="col-lg-3 col-md-3">
+
+                        </div>
+                        <div class="col-lg-6 col-md-6">
+                            <div class="account_form">
+                                <h2>login</h2>
+                                <form id="loginForm" method="post" th:action="@{/user/login/success}">
+                                    <p>
+                                        <label>Email<span style="color: red;">*</span></label>
+                                        <input type="text" name="cemail" required="required">
+                                    </p>
+                                    <p>
+                                        <label>Password<span style="color: red;">*</span></label>
+                                        <input type="password" name="CustomerPassword" required="required">
+                                    </p>
+                                    <div class="login_submit">
+                                        <a href="/user/forgot-password">Lost your password?</a>
+                                        <button
+                                            style="background-color: white; color: black; border: 0.2px solid rgb(152, 152, 152);"
+                                            onmouseover="this.style.background='#fe3737'; this.style.color='white'"
+                                            onmouseout="this.style.background='white'; this.style.color='black'"
+                                            type="button" onclick="window.location.href='/user/register';">Register
+                                        </button>
+                                        <button type="submit">Login</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-3">
+
+                        </div>
+                        <!--login area start-->
+
+                    </div>
+                </div>
+            </div>
+            <!-- customer login end -->
+
+        </section>
+    </div>
+
+    <!-- Include Toastify -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var loginForm = document.getElementById('loginForm');
+            loginForm.addEventListener('submit', function (e) {
+                e.preventDefault(); 
+
+                const formData = new FormData(loginForm);
+                const actionUrl = loginForm.action;
+
+                fetch(actionUrl, {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                    .then(response => response.json().then(data => ({ status: response.status, body: data })))
+                    .then(({ status, body }) => {
+                        if (status === 200 && body.success) {
+                            window.location.href = '/user/index';
+                        } else {
+                            Toastify({
+                                text: body.message || "Login failed. Please try again.",
+                                duration: 1000,
+                                gravity: "top",
+                                position: 'right',
+                                backgroundColor: "#f44336",
+                            }).showToast();
+                        }
+                    })
+                    .catch(error => {
+                        Toastify({
+                            text: "Error: " + (error.statusText || "Something went wrong"),
+                            duration: 1000,
+                            gravity: "top",
+                            position: 'right',
+                            backgroundColor: "#f44336",
+                        }).showToast();
+                    });
+            });
+        });
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,183 @@
+<!doctype html>
+<html class="no-js" lang="en" xmlns:th="https://www.thymeleaf.org/">
+
+
+<head th:replace="~{user/layout :: pageHead('Checkout')}">
+</head>
+
+<body>
+    <div th:replace="~{user/layout :: body}">
+        <section th:fragment="mainContent">
+            <!--breadcrumbs area start-->
+            <div class="breadcrumbs_area">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="breadcrumb_content">
+                                <h3>checkout</h3>
+                                <ul>
+                                    <li><a href="/user/index">home</a></li>
+                                    <li>checkout</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--breadcrumbs area end-->
+            <!--Checkout page section-->
+            <div class="Checkout_section">
+                <div class="container">
+
+                    <div class="checkout_form">
+                        <form th:action="@{/user/checkout/confirmation}" th:object="${customers}" method="post">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6">
+                                    <h3>Billing Details</h3>
+                                    <div class="row">
+
+                                        <div class="col-12 mb-20">
+                                            <label>Full Name <span>*</span> </label>
+                                            <input placeholder="Enter your full name" type="text"
+                                                th:field="*{CustomerName}" required>
+                                        </div>
+                                        <div class="col-12 mb-20">
+                                            <label>Province <span>*</span></label>
+                                            <select class="select_option" name="orderProvince" id="province" required>
+                                                <option value="" disabled selected>Select a province</option>
+                                                <option th:each="province : ${provinces}"
+                                                    th:value="${province.idProvince}" th:text="${province.name}">
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12 mb-20">
+                                            <label>City <span>*</span></label>
+                                            <select class="select_option" name="orderCity" id="city" required
+                                                style="display: inline-block;">
+                                                <option value="" disabled selected>Select a city</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12 mb-20">
+                                            <label>Address <span>*</span></label>
+                                            <input placeholder="House number and street name" type="text"
+                                                name="orderAddress" required>
+                                        </div>
+                                        <div class="col-lg-6 mb-20">
+                                            <label>Phone <span>*</span></label>
+                                            <input type="text" th:field="*{CustomerPhone}" required>
+                                        </div>
+                                        <div class="col-lg-6 mb-20">
+                                            <label> Email Address <span>*</span></label>
+                                            <input type="text" th:field="*{cemail}" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6">
+                                    <h3>Your order</h3>
+                                    <div class="order_table table-responsive">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th style="text-align: left; padding-left: 15px;">Product</th>
+                                                    <th style="text-align: right; padding-right: 15px;">Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="cartItem : ${cartItems2}">
+                                                    <td style="text-align: left; padding-left: 15px;">
+                                                        [[${#strings.abbreviate(cartItem.productName, 60)}]] <strong> ×
+                                                            [[${cartItem.quantity}]]</strong></td>
+                                                    <td style="text-align: right; padding-right: 15px;">
+                                                        $[[${cartItem.totalPrice}]]</td>
+                                                </tr>
+
+                                            </tbody>
+                                            <tfoot>
+                                                <tr class="order_total">
+                                                    <th style="text-align: left; padding-left: 15px;">Order Total</th>
+                                                    <td style="text-align: right; padding-right: 15px;">
+                                                        <strong>$[[${#numbers.formatDecimal(total,2,2)}]]</strong>
+                                                    </td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                    <div class="col-12 mb-20">
+                                        <label> Note</label>
+                                        <input type="text" name="orderNote">
+                                    </div>
+                                    <div class="payment_method">
+                                        <div class="order_button">
+                                            <button type="submit" style="float: right;">Checkout</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--Checkout page section end-->
+        </section>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var provinceSelect = document.getElementById("province");
+            var citySelect = document.getElementById("city");
+
+            if (provinceSelect) {
+                provinceSelect.onchange = function () {
+                    var provinceId = this.value;
+
+
+                    // Clear previous options in the city dropdown
+                    citySelect.innerHTML = '<option value="" disabled selected>Select a city</option>';
+
+                    // Fetch districts based on selected province
+                    fetch(`/user/districts/${provinceId}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (Array.isArray(data) && data.length > 0) {
+                                data.forEach(function (district) {
+                                    // Create a new option element
+                                    let option = document.createElement("option");
+                                    option.value = district.name;
+                                    option.textContent = district.name;
+                                    citySelect.appendChild(option);
+                                });
+
+                                // Re-initialize or refresh the custom select library
+                                $(citySelect).niceSelect('update'); // Adjust this line based on your library's method
+                            } else {
+                                console.warn("No districts found for this province.");
+                            }
+                        })
+                        .catch(error => {
+                            console.error('There was a problem with the fetch operation:', error);
+                        });
+                };
+            } else {
+                console.error("Province select element not found!");
+            }
+
+            // Check if the cart is empty and show a toast notification
+            var emptyCart = "[[${emptyCart}]]";
+            if (emptyCart === "true") {
+                Toastify({
+                    text: "Your cart is empty. Please add products to your cart before checking out.",
+                    duration: 700,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "#f44336",
+                }).showToast();
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,113 @@
+<!doctype html>
+<html class="no-js" lang="en" xmlns:th="https://www.thymeleaf.org/">
+
+
+<head th:replace="~{user/layout :: pageHead('Cart')}">
+
+</head>
+
+<body>
+
+    <div th:replace="~{user/layout :: body}">
+        <section th:fragment="mainContent">
+            <!--breadcrumbs area start-->
+            <div class="breadcrumbs_area">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="breadcrumb_content">
+                                <h3>cart</h3>
+                                <ul>
+                                    <li><a href="/user/index">home</a></li>
+                                    <li>shopping cart</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--breadcrumbs area end-->
+            <!--shopping cart area start -->
+            <div class="shopping_cart_area">
+                <div class="container">
+                    <form th:action="@{/user/cart/update}" method="post">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="table_desc">
+                                    <div class="cart_page table-responsive">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th class="product_remove">Delete</th>
+                                                    <th class="product_thumb">Image</th>
+                                                    <th class="product_name">Product</th>
+                                                    <th class="product-price">Price</th>
+                                                    <th class="product_quantity">Quantity</th>
+                                                    <th class="product_total">Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="item : ${cartItems}">
+                                                    <td class="product_remove">
+                                                        <a th:href="@{/user/cart/delete/{productId}(productId=${item.ProductId})}"
+                                                            style="background: none; border: none; cursor: pointer;">
+                                                            <i class="fa fa-trash-o"></i>
+                                                        </a>
+                                                    </td>
+
+                                                    <td class="product_thumb"><a href="#"><img
+                                                                th:src="@{'/productimages/'+${item.ProductImage}}"
+                                                                alt=""></a></td>
+                                                    <td class="product_name"><a href="#">[[${item.ProductName}]]</a>
+                                                    </td>
+                                                    <td class="product-price">$[[${item.ProductPrice}]]</td>
+                                                    <td class="product_quantity"><input min="1" max="100"
+                                                            th:value="${item.quantity}" type="number"
+                                                            th:name="'quantity-' + ${item.ProductId}">
+                                                    </td>
+                                                    <td class="product_total">$[[${#numbers.formatDecimal(item.totalPrice, 2, 2)}]]</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="cart_submit">
+                                        <button type="submit">update cart</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--coupon code area start-->
+                        <div class="coupon_area">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6">
+
+                                </div>
+                                <div class="col-lg-6 col-md-6">
+                                    <div class="coupon_code right">
+                                        <h3>Cart Totals</h3>
+                                        <div class="coupon_inner">
+                                            <div class="cart_subtotal">
+                                                <p>Total</p>
+                                                <p class="cart_amount">$<span
+                                                        th:text="${#numbers.formatDecimal(total, 2, 2)}"></p>
+                                            </div>
+                                            <div class="checkout_btn">
+                                                <a href="/user/checkout">Proceed to Checkout</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--coupon code area end-->
+                    </form>
+                </div>
+            </div>
+            <!--shopping cart area end -->
+
+        </section>
+    </div>
+</body>
+
+
+</html>

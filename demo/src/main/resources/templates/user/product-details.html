@@ -1,0 +1,237 @@
+<!doctype html>
+<html class="no-js" lang="en" xmlns:th="https://www.thymeleaf.org/">
+
+<head th:replace="~{user/layout :: pageHead('Product Details')}">
+
+</head>
+
+<body>
+
+    <div th:replace="~{user/layout :: body}">
+        <section th:fragment="mainContent">
+            <!--breadcrumbs area start-->
+            <div class="breadcrumbs_area">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="breadcrumb_content">
+                                <h3>product</h3>
+                                <ul>
+                                    <li><a href="/user/index">home</a></li>
+                                    <li>product details</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--breadcrumbs area end-->
+
+            <!--product details start-->
+            <div class="product_details mb-60">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-4 col-md-5">
+                            <div class="product-details-tab">
+                                <div id="img-1" class="zoomWrapper single-zoom">
+                                    <a href="#">
+                                        <img id="zoom1" th:src="@{'/productimages/' + ${products.ProductMainImage}}"
+                                            th:attr="data-zoom-image=@{'/productimages/' + ${products.ProductMainImage}}"
+                                            alt="big-1">
+                                    </a>
+                                </div>
+
+                                <div class="single-zoom-thumb">
+                                    <ul class="s-tab-zoom owl-carousel single-product-active" id="gallery_01">
+                                        <li>
+                                            <a href="#" class="elevatezoom-gallery"
+                                                th:attr="data-image=@{'/productimages/' + ${products.ProductMainImage}}, data-zoom-image=@{'/productimages/' + ${products.ProductMainImage}}">
+                                                <img th:src="@{'/productimages/' + ${products.ProductMainImage}}"
+                                                    alt="main image" />
+                                            </a>
+                                        </li>
+
+                                        <li th:each="image : ${galleryImageUrls}">
+                                            <a href="#" class="elevatezoom-gallery"
+                                                th:attr="data-image=@{${image}}, data-zoom-image=@{${image}}">
+                                                <img th:src="${image}" alt="thumbnail" />
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-7 col-md-7">
+                            <div class="product_d_right">
+                                <form id="add-to-cart-form" th:action="@{/user/cart/add}" method="post">
+                                    <div class="productd_title_nav">
+                                        <h1><a href="#">[[${products.ProductName}]]</a></h1>
+
+                                    </div>
+
+                                    <div class=" product_ratting">
+                                        <ul>
+                                            <li><a href="#"><i class="ion-android-star"></i></a></li>
+                                            <li><a href="#"><i class="ion-android-star"></i></a></li>
+                                            <li><a href="#"><i class="ion-android-star"></i></a></li>
+                                            <li><a href="#"><i class="ion-android-star"></i></a></li>
+                                            <li><a href="#"><i class="ion-android-star"></i></a></li>
+                                            <li class="review"><a href="#"></a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="price_box">
+                                        <span class="current_price">$[[${products.ProductPrice}]]</span>
+                                    </div>
+                                    <div class="product_variant quantity">
+                                        <label>quantity</label>
+                                        <input min="1" max="100" value="1" type="number" name="quantity" required>
+                                        <input type="hidden" name="productId" th:value="${products.ProductId}">
+                                        <button class="button" type="submit"><i class="icon-bag icons"></i></button>
+                                    </div>
+                                    <div class="product_meta">
+                                        <span>Category: [[${products.ProductCategory}]]</span>
+                                    </div>
+
+                                </form>
+                                <div class="product_social">
+                                    <ul>
+                                        <li><a class="facebook" href="#" title="facebook"><i class="fa fa-facebook"></i>
+                                                Like</a></li>
+                                        <li><a class="twitter" href="#" title="twitter"><i class="fa fa-twitter"></i>
+                                                tweet</a></li>
+                                        <li><a class="pinterest" href="#" title="pinterest"><i
+                                                    class="fa fa-pinterest"></i> save</a></li>
+                                        <li><a class="google-plus" href="#" title="google +"><i
+                                                    class="fa fa-google-plus"></i> share</a></li>
+                                        <li><a class="linkedin" href="#" title="linkedin"><i class="fa fa-linkedin"></i>
+                                                linked</a></li>
+                                    </ul>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-lg-1 col-md-12"></div>
+                    </div>
+                </div>
+            </div>
+            <!--product details end-->
+
+            <!--product info start-->
+            <div class="product_d_info mb-57">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="product_d_inner">
+                                <div class="product_info_button">
+                                    <ul class="nav" role="tablist">
+                                        <li>
+                                            <a class="active" data-bs-toggle="tab" href="#info" role="tab"
+                                                aria-controls="info" aria-selected="false">Description</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade show active" id="info" role="tabpanel">
+                                        <div class="product_info_content">
+                                            <p th:utext="${products.ProductDescription}"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--product info end-->
+
+            <!--product area start-->
+            <section class="product_area related_products mb-55">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="section_title psec_title">
+                                <h2>Related Products</h2>
+                                <p>Browse the collection of our category products. </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="product_carousel product_column4 owl-carousel">
+                            <div class="col-lg-3" th:each="relatedProduct:${relatedProducts}">
+                                <article class="single_product">
+                                    <figure>
+                                        <div class="product_thumb">
+                                            <a class="primary_img"
+                                                th:href="@{'/user/product-details/'+ ${relatedProduct.ProductId}}"><img
+                                                    th:src="@{'/productimages/'+${relatedProduct.ProductMainImage}}"
+                                                    alt=""></a>
+                                            <div class="action_links">
+                                                <ul>
+                                                    <li class="add_to_cart" style="display: inline-block;">
+                                                        <form id="add-to-cart-form" th:action="@{/user/cart/add}"
+                                                            method="POST" style="display: inline;">
+                                                            <input type="hidden" name="productId"
+                                                                th:value="${relatedProduct.ProductId}" />
+                                                            <input type="hidden" name="quantity" value="1" />
+                                                            <button type="submit" class="add_to_cart_button">
+                                                                <i class="icon-bag icons"></i>
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <figcaption class="product_content">
+                                            <h4 class="product_name"><a
+                                                    th:href="@{'/user/product-details/'+ ${relatedProduct.ProductId}}">[[${relatedProduct.ProductName}]]</a>
+                                            </h4>
+                                            <div class="price_box">
+                                                <span class="current_price">$[[${relatedProduct.ProductPrice}]]</span>
+                                            </div>
+                                            <div class="product_rating">
+                                                <ul>
+                                                    <li><a href="#"><i class="ion-android-star"></i></a></li>
+                                                    <li><a href="#"><i class="ion-android-star"></i></a></li>
+                                                    <li><a href="#"><i class="ion-android-star"></i></a></li>
+                                                    <li><a href="#"><i class="ion-android-star"></i></a></li>
+                                                    <li><a href="#"><i class="ion-android-star"></i></a></li>
+                                                </ul>
+                                            </div>
+                                        </figcaption>
+                                    </figure>
+                                </article>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!--product area end-->
+
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const thumbnails = document.querySelectorAll('.elevatezoom-gallery');
+
+            thumbnails.forEach(thumbnail => {
+                thumbnail.addEventListener('click', function (event) {
+                    event.preventDefault();
+
+                    const mainImage = document.getElementById('zoom1');
+                    const newImageSrc = this.getAttribute('data-image');
+                    const newZoomImageSrc = this.getAttribute('data-zoom-image');
+
+                    mainImage.src = newImageSrc;
+                    mainImage.setAttribute('data-zoom-image', newZoomImageSrc);
+
+                    thumbnails.forEach(th => th.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+
+
+</html>

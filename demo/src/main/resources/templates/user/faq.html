@@ -1,0 +1,228 @@
+<!doctype html>
+<html class="no-js" lang="en" xmlns:th="https://www.thymeleaf.org/">
+
+
+<head th:replace="user/layout :: pageHead('FAQ')">
+
+</head>
+
+<body>
+
+    <div th:replace="user/layout :: body">
+        <section th:fragment="mainContent">
+            <!--breadcrumbs area start-->
+            <div class="breadcrumbs_area">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="breadcrumb_content">
+                                <h3>faq</h3>
+                                <ul>
+                                    <li><a href="/user/index">home</a></li>
+                                    <li>frequently questions</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--breadcrumbs area end-->
+            <!--faq area start-->
+            <div class="faq_content_area">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="faq_content_wrapper">
+                                <h4>Below are frequently asked questions, you may find the answer for yourself</h4>
+                                <p>We’ve gathered answers to the most common questions about our products, delivery, and
+                                    more. If you can't find the information you need, feel free to reach out to our
+                                    support team.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Accordion area-->
+            <div class="accordion_area">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div id="accordion" class="card__accordion">
+                                <!-- FAQ 1: Reset Password -->
+                                <div class="card card_dipult">
+                                    <div class="card-header card_accor" id="headingOne">
+                                        <button class="btn btn-link" data-bs-toggle="collapse"
+                                            data-bs-target="#collapseOne" aria-expanded="true"
+                                            aria-controls="collapseOne">
+                                            How do I reset my password? <i class="fa fa-plus"></i>
+                                            <i class="fa fa-minus"></i>
+                                        </button>
+                                    </div>
+                                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                                        data-parent="#accordion">
+                                        <div class="card-body">
+                                            <p>To reset your password, click on the "Forgot Password" link on the login
+                                                page, then follow the instructions sent to your email address.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- FAQ 2: Order Tracking -->
+                                <div class="card card_dipult">
+                                    <div class="card-header card_accor" id="headingTwo">
+                                        <button class="btn btn-link collapsed" data-bs-toggle="collapse"
+                                            data-bs-target="#collapseTwo" aria-expanded="false"
+                                            aria-controls="collapseTwo">
+                                            How do I track my order status?
+                                            <i class="fa fa-plus"></i>
+                                            <i class="fa fa-minus"></i>
+                                        </button>
+                                    </div>
+                                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
+                                        data-parent="#accordion">
+                                        <div class="card-body">
+                                            <p>You can track your order status by logging into your account and visiting
+                                                the "Order" section in "Account" page.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- FAQ 3: Product Authenticity -->
+                                <div class="card card_dipult">
+                                    <div class="card-header card_accor" id="headingThree">
+                                        <button class="btn btn-link collapsed" data-bs-toggle="collapse"
+                                            data-bs-target="#collapseThree" aria-expanded="false"
+                                            aria-controls="collapseThree">
+                                            Are your products 100% authentic?
+                                            <i class="fa fa-plus"></i>
+                                            <i class="fa fa-minus"></i>
+                                        </button>
+                                    </div>
+                                    <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
+                                        data-parent="#accordion">
+                                        <div class="card-body">
+                                            <p>Yes, we guarantee that all our products are 100% authentic, sourced
+                                                directly from trusted brands and authorized suppliers.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- FAQ 4: Product Ingredients -->
+                                <div class="card card_dipult">
+                                    <div class="card-header card_accor" id="headingfour">
+                                        <button class="btn btn-link collapsed" data-bs-toggle="collapse"
+                                            data-bs-target="#collapseeight" aria-expanded="false"
+                                            aria-controls="collapseeight">
+                                            Where can I find the ingredients list for the products?
+                                            <i class="fa fa-plus"></i>
+                                            <i class="fa fa-minus"></i>
+                                        </button>
+                                    </div>
+                                    <div id="collapseeight" class="collapse" aria-labelledby="headingfour"
+                                        data-parent="#accordion">
+                                        <div class="card-body">
+                                            <p>Each product page contains detailed information about the ingredients
+                                                used. If you're looking for something specific, feel free to contact us.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- FAQ 5: Skin Type Recommendations -->
+                                <div class="card card_dipult">
+                                    <div class="card-header card_accor" id="headingfive">
+                                        <button class="btn btn-link collapsed" data-bs-toggle="collapse"
+                                            data-bs-target="#collapseseven" aria-expanded="false"
+                                            aria-controls="collapseseven">
+                                            How do I know which products are suitable for my skin type?
+                                            <i class="fa fa-plus"></i>
+                                            <i class="fa fa-minus"></i>
+                                        </button>
+                                    </div>
+                                    <div id="collapseseven" class="collapse" aria-labelledby="headingfive"
+                                        data-parent="#accordion">
+                                        <div class="card-body">
+                                            <p>We offer a variety of products for different skin types. Check the
+                                                product descriptions or consult our skincare experts for personalized
+                                                recommendations.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- FAQ 6: Damaged Items -->
+                                <div class="card card_dipult">
+                                    <div class="card-header card_accor" id="headingsix">
+                                        <button class="btn btn-link collapsed" data-bs-toggle="collapse"
+                                            data-bs-target="#collapsefour" aria-expanded="false"
+                                            aria-controls="collapsefour">
+                                            What should I do if I receive a damaged item?
+                                            <i class="fa fa-plus"></i>
+                                            <i class="fa fa-minus"></i>
+                                        </button>
+                                    </div>
+                                    <div id="collapsefour" class="collapse" aria-labelledby="headingsix"
+                                        data-parent="#accordion">
+                                        <div class="card-body">
+                                            <p>If you receive a damaged item, please contact our customer service
+                                                immediately. Provide photos of the damage, and we will assist you with a
+                                                replacement or refund.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- FAQ 7: Product Usage -->
+                                <div class="card card_dipult">
+                                    <div class="card-header card_accor" id="headingseven">
+                                        <button class="btn btn-link collapsed" data-bs-toggle="collapse"
+                                            data-bs-target="#collapsefive" aria-expanded="false"
+                                            aria-controls="collapsefive">
+                                            How do I use this product for best results?
+                                            <i class="fa fa-plus"></i>
+                                            <i class="fa fa-minus"></i>
+                                        </button>
+                                    </div>
+                                    <div id="collapsefive" class="collapse" aria-labelledby="headingseven"
+                                        data-parent="#accordion">
+                                        <div class="card-body">
+                                            <p>Each product page includes detailed instructions on how to use the
+                                                product for optimal results. You can also refer to the packaging for
+                                                specific guidance.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- FAQ 8: Order Tracking -->
+                                <div class="card card_dipult">
+                                    <div class="card-header card_accor" id="headingeight">
+                                        <button class="btn btn-link collapsed" data-bs-toggle="collapse"
+                                            data-bs-target="#collapsesix" aria-expanded="false"
+                                            aria-controls="collapsesix">
+                                            Do you offer gift wrapping services?
+                                            <i class="fa fa-plus"></i>
+                                            <i class="fa fa-minus"></i>
+                                        </button>
+                                    </div>
+                                    <div id="collapsesix" class="collapse" aria-labelledby="headingeight"
+                                        data-parent="#accordion">
+                                        <div class="card-body">
+                                            <p>Yes, we offer gift wrapping services for an additional charge. Please
+                                                select the gift wrapping option during checkout, and we will make sure
+                                                your purchase is beautifully wrapped and ready to gift!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--Accordion area end-->
+            <!--faq area end-->
+
+        </section>
+    </div>
+</body>
+
+
+</html>

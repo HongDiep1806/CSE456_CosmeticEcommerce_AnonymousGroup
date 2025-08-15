@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg"
+    data-sidebar-image="none" data-preloader="disable" xmlns:th="http://www.thymeleaf.org">
+
+
+<head th:replace="admin/layout :: pageHead('Customers')">
+
+</head>
+
+<body>
+
+    <div th:replace="admin/layout :: body">
+        <section th:fragment="mainContent">
+            <div class="page-content">
+                <div class="container-fluid">
+                    <!-- start page title -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                                <h4 class="mb-sm-0">Customers</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end page title -->
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card" id="customerList">
+                                <div class="card-header border-bottom-dashed">
+
+                                    <div class="row g-4 align-items-center">
+                                        <div class="col-sm">
+                                            <div>
+                                                <h5 class="card-title mb-0">Customer List</h5>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-auto">
+                                            <div class="d-flex flex-wrap align-items-start gap-2">
+                                                <button class="btn btn-soft-danger" id="remove-actions"
+                                                    onclick="deleteMultiple()"><i
+                                                        class="ri-delete-bin-2-line"></i></button>
+                                                <button class="btn btn-info" type="button" id="exportButton"
+                                                    onclick="window.location.href='/export/customers/csv'">
+                                                    <i class="ri-file-download-line align-bottom me-1"></i> Export
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body border-bottom-dashed border-bottom">
+                                    <form>
+                                        <div class="row g-3">
+                                            <div class="col-xl-6">
+                                                <div class="search-box">
+                                                    <input type="text" class="form-control search"
+                                                        placeholder="Search for customer, email, phone, status or something...">
+                                                    <i class="ri-search-line search-icon"></i>
+                                                </div>
+                                            </div>
+                                            <!--end col-->
+                                            <div class="col-xl-6">
+                                                <div class="row g-3">
+                                                    <div class="col-sm-4">
+                                                        <div class="">
+                                                            <input type="text" class="form-control"
+                                                                id="datepicker-range" data-provider="flatpickr"
+                                                                data-date-format="d M, Y" data-range-date="true"
+                                                                placeholder="Select date">
+                                                        </div>
+                                                    </div>
+                                                    <!--end col-->
+                                                    <div class="col-sm-4">
+                                                        <div>
+                                                            <select class="form-control" data-plugin="choices"
+                                                                data-choices="" data-choices-search-false=""
+                                                                name="choices-single-default" id="idStatus">
+                                                                <option value="">Status</option>
+                                                                <option value="all" selected="">All</option>
+                                                                <option value="Active">Active</option>
+                                                                <option value="Block">Block</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <!--end col-->
+
+                                                    <div class="col-sm-4">
+                                                        <div>
+                                                            <button type="button" class="btn btn-primary w-100"
+                                                                onclick="SearchData();"><i
+                                                                    class="ri-equalizer-fill me-2 align-bottom"></i>Filters
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <!--end col-->
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--end row-->
+                                    </form>
+                                </div>
+                                <div class="card-body">
+                                    <div>
+                                        <div class="table-responsive table-card mb-1">
+                                            <table class="table align-middle" id="customerTable">
+                                                <thead class="table-light text-muted">
+                                                    <tr>
+
+                                                        <th>ID</th>
+                                                        <th class="sort" data-sort="customer_name">Full Name</th>
+                                                        <th class="sort" data-sort="customer_name">Email</th>
+                                                        <th class="sort" data-sort="quantity">Phone</th>
+                                                        <th class="sort" data-sort="customer_name">Address</th>
+                                                        <th class="sort" data-sort="customer_name">City</th>
+                                                        <th class="sort" data-sort="customer_name">Province</th>
+                                                        <th class="sort desc" data-sort="status">Status</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="list form-check-all">
+                                                    <tr th:each="customer : ${customers}">
+
+                                                        <td class="id">[[${customer.CustomerId}]]</td>
+                                                        <td class="customer_name">[[${customer.CustomerName}]]</td>
+                                                        <td class="email">[[${customer.cemail}]]</td>
+                                                        <td class="quantity">[[${customer.CustomerPhone}]]</td>
+                                                        <td class="customer_name"
+                                                            th:text="${#strings.abbreviate(customer.CustomerAddress, 30)}">
+                                                        </td>
+                                                        <td class="customer_name">[[${customer.CustomerCity}]]</td>
+                                                        <td class="customer_name">[[${customer.CustomerProvince}]]</td>
+                                                        <td class="status">
+                                                            <span th:if="${customer.CustomerStatus == 'Active'}"
+                                                                class="badge bg-success-subtle text-success text-uppercase">Active</span>
+                                                            <span th:if="${customer.CustomerStatus == 'Block'}"
+                                                                class="badge bg-danger-subtle text-danger text-uppercase">Block</span>
+                                                        </td>
+                                                        <td>
+                                                            <ul class="list-inline hstack gap-2 mb-0">
+                                                                <li class="list-inline-item edit"
+                                                                    data-bs-toggle="tooltip" data-bs-trigger="hover"
+                                                                    data-bs-placement="top" aria-label="Edit"
+                                                                    data-bs-original-title="Edit">
+                                                                    <a href="#editRecordModal"
+                                                                        class="text-primary d-inline-block edit-customer-btn"
+                                                                        data-bs-toggle="modal" th:attr="data-id=${customer.CustomerId}, data-name=${customer.CustomerName},
+                                                                        data-status=${customer.CustomerStatus}">
+                                                                        <i class="ri-pencil-fill fs-16"></i>
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <div class="noresult" style="display: none">
+                                                <div class="text-center">
+                                                    <lord-icon src="https://cdn.lordicon.com/msoeawqm.json"
+                                                        trigger="loop" colors="primary:#121331,secondary:#08a88a"
+                                                        style="width:75px;height:75px"></lord-icon>
+                                                    <h5 class="mt-2">Sorry! No Result Found</h5>
+                                                    <p class="text-muted mb-0">We've searched more than 150+ customer We
+                                                        did not find any customer for you search.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal fade" id="editRecordModal" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-light p-3">
+                                                    <h5 class="modal-title">Edit Customer</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <form th:action="@{/admin/editCustomer}" method="post"
+                                                    autocomplete="off">
+                                                    <div class="modal-body">
+                                                        <input type="hidden" name="CustomerId" id="customerIdField" />
+                                                        <div class="mb-3">
+                                                            <label for="customername-field" class="form-label">Customer
+                                                                Name</label>
+                                                            <input type="text" id="customername-field"
+                                                                name="CustomerName" class="form-control" readonly />
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="status-field" class="form-label">Status</label>
+                                                            <select class="form-control" name="CustomerStatus"
+                                                                id="status-field" required>
+                                                                <option value="Active">Active</option>
+                                                                <option value="Block">Block</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-light"
+                                                            data-bs-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-success">Update
+                                                            Customer</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-end">
+                                        <div class="pagination-wrap hstack gap-2">
+                                            <a style="display: none;" class="page-item pagination-prev disabled"
+                                                href="#">
+                                                Previous
+                                            </a>
+                                            <ul class="pagination listjs-pagination mb-0">
+                                                <li class="active"><a class="page" href="#" data-i="1"
+                                                        data-page="8">1</a></li>
+                                            </ul>
+                                            <a style="display: none;" class="page-item pagination-next" href="#">
+                                                Next
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--end col-->
+                    </div>
+                    <!--end row-->
+                </div>
+            </div>
+    </div>
+    </section>
+    </div>
+
+</body>
+
+
+</html>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const editButtons = document.querySelectorAll('.edit-customer-btn');
+
+        editButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const categoryId = this.getAttribute('data-id');
+                const categoryName = this.getAttribute('data-name');
+                const categoryStatus = this.getAttribute('data-status');
+
+                document.getElementById('customerIdField').value = categoryId;
+                document.getElementById('customername-field').value = categoryName;
+                document.getElementById('status-field').value = categoryStatus;
+            });
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        let currentColumn = null;
+        let isAscending = true;
+
+        // Select all headers with the "sort" class
+        document.querySelectorAll('th.sort').forEach(header => {
+            header.addEventListener('click', () => {
+                const table = header.closest('table');
+                const tbody = table.querySelector('tbody');
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+                const columnIndex = Array.from(header.parentNode.children).indexOf(header);
+
+                // If the same column is clicked, toggle sort direction
+                if (currentColumn === header) {
+                    isAscending = !isAscending;
+                } else {
+                    // Otherwise, set to ascending and clear classes from other headers
+                    isAscending = true;
+                    document.querySelectorAll('th.sort').forEach(h => h.classList.remove('ascending', 'descending'));
+                    currentColumn = header;
+                }
+
+                // Update the header class for the sort direction
+                header.classList.toggle('ascending', isAscending);
+                header.classList.toggle('descending', !isAscending);
+
+                // Sort rows based on the text content in the clicked column
+                rows.sort((rowA, rowB) => {
+                    const cellA = rowA.children[columnIndex].textContent.trim();
+                    const cellB = rowB.children[columnIndex].textContent.trim();
+
+                    // Handle date sorting (if applicable)
+                    const comparison = !isNaN(Date.parse(cellA)) && !isNaN(Date.parse(cellB))
+                        ? new Date(cellA) - new Date(cellB)
+                        : (!isNaN(cellA) && !isNaN(cellB))
+                            ? cellA - cellB
+                            : cellA.localeCompare(cellB, undefined, { numeric: true });
+
+                    return isAscending ? comparison : -comparison;
+                });
+
+                // Re-attach sorted rows to the tbody
+                rows.forEach(row => tbody.appendChild(row));
+            });
+        });
+    });
+
+
+</script>
+
+</body>
+
+
+</html>

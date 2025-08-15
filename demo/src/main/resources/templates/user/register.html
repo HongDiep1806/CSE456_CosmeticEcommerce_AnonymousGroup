@@ -1,0 +1,97 @@
+<!doctype html>
+<html class="no-js" lang="en" xmlns:th="https://www.thymeleaf.org/">
+
+
+<head th:replace="user/layout :: pageHead('Register')">
+</head>
+
+<body>
+
+<div th:replace="user/layout :: body">
+    <section th:fragment="mainContent">
+
+        <!--breadcrumbs area start-->
+        <div class="breadcrumbs_area">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="breadcrumb_content">
+                            <h3>Register</h3>
+                            <ul>
+                                <li><a href="/user/index">home</a></li>
+                                <li>register</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--breadcrumbs area end-->
+
+        <!-- customer login start -->
+        <div class="customer_login">
+            <div class="container">
+                <div class="row">
+                    <!--login area start-->
+                    <div class="col-lg-3 col-md-3"></div>
+                    <div class="col-lg-6 col-md-12">
+                        <div class="account_form">
+                            <h2>Register</h2>
+                            <form method="post" enctype="multipart/form-data" th:action="@{/user/register/save}" th:object="${customers}">
+                                <div class="row">
+                                    <!-- Column 1: Full Name, Email, Password, Confirm Password -->
+                                    <div class="col-lg-12 col-md-6">
+                                        <p>
+                                            <label>Full Name<span style="color: red;">*</span></label>
+                                            <input type="text" th:field="*{CustomerName}" required="Add">
+                                        </p>
+                                        <p>
+                                            <label>Email<span style="color: red;">*</span></label>
+                                            <input type="text" name="cemail" th:field="*{cemail}" required="Add">
+                                        </p>
+
+                                        <p>
+                                            <label>Password<span style="color: red;">*</span></label>
+                                            <input type="password" th:field="*{CustomerPassword}" required="Add">
+                                        </p>
+
+                                        <p>
+                                            <label>Confirm Password<span style="color: red;">*</span></label>
+                                            <input type="password" name="confirmPassword" required="Add">
+                                        </p>
+                                        <p>
+                                            <label>Phone<span style="color: red;">*</span></label>
+                                            <input type="text" th:field="*{CustomerPhone}" required="Add">
+                                        </p>
+                                        <div th:if="${error}">
+                                            <p style="color: red;">[[${error}]]</p>
+                                        </div>
+                                        <div class="login_submit">
+                                            <a href="/user/login">Have an account?</a>
+                                            <button type="submit">Register</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-3"></div>
+                    <!--login area end-->
+                </div>
+            </div>
+        </div>
+        <!-- customer login end -->
+
+
+</div>
+</div>
+</div>
+<!-- customer login end -->
+
+</section>
+</div>
+
+</body>
+
+
+</html>

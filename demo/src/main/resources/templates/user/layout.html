@@ -1,0 +1,621 @@
+<!doctype html>
+<html class="no-js" lang="en" xmlns:th="https://www.thymeleaf.org/">
+
+<head th:fragment="pageHead(pageTitle)">
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title th:text="${pageTitle}"></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/user/assets/img/favicon.ico}">
+
+    <!-- CSS 
+    ========================= -->
+    <!--bootstrap min css-->
+    <link rel="stylesheet" th:href="@{/user/assets/css/bootstrap.min.css}">
+    <!--owl carousel min css-->
+    <link rel="stylesheet" th:href="@{/user/assets/css/owl.carousel.min.css}">
+    <!--slick min css-->
+    <link rel="stylesheet" th:href="@{/user/assets/css/slick.css}">
+    <!--magnific popup min css-->
+    <link rel="stylesheet" th:href="@{/user/assets/css/magnific-popup.css}">
+    <!--font awesome css-->
+    <link rel="stylesheet" th:href="@{/user/assets/css/font.awesome.css}">
+    <!--ionicons css-->
+    <link rel="stylesheet" th:href="@{/user/assets/css/ionicons.min.css}">
+    <!--simple line icons css-->
+    <link rel="stylesheet" th:href="@{/user/assets/css/simple-line-icons.css}">
+    <!--animate css-->
+    <link rel="stylesheet" th:href="@{/user/assets/css/animate.css}">
+    <!--jquery ui min css-->
+    <link rel="stylesheet" th:href="@{/user/assets/css/jquery-ui.min.css}">
+    <!--slinky menu css-->
+    <link rel="stylesheet" th:href="@{/user/assets/css/slinky.menu.css}">
+    <!--plugins css-->
+    <link rel="stylesheet" th:href="@{/user/assets/css/plugins.css}">
+
+    <!-- Main Style CSS -->
+    <link rel="stylesheet" th:href="@{/user/assets/css/style.css}">
+
+    <!--modernizr min js here-->
+    <script th:src="@{/user/assets/js/vendor/modernizr-3.7.1.min.js}"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.11.2/toastify.min.css"
+        integrity="sha512-ecfz7BsZIyMBMdXTx7GU2128lQ7MTiqGJwAqCumba6v8y7YDhYEHueqy+iUtUdZsnsKhCyoCcFGGMhpwQOy6xg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+
+
+    <div th:fragment="body">
+
+        <!--header area start-->
+
+
+        <!--offcanvas menu area start-->
+        <div class="off_canvars_overlay">
+
+        </div>
+        <div class="offcanvas_menu">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="canvas_open">
+                            <a href="javascript:void(0)"><i class="icon-menu"></i></a>
+                        </div>
+                        <div class="offcanvas_menu_wrapper">
+                            <!-- <div class="canvas_close">
+                                <a href="javascript:void(0)"><i class="ion-android-close"></i></a>
+                            </div>
+                            <div class="header_contact_info">
+                                <ul>
+                                    <li><a href="tel:0(1234)567890"><i class="icon-call-in"></i> 0(1234)567890</a></li>
+                                    <li><a href="mailto:http://1.envato.market/9LbxW"><i class="icon-envelope"></i>
+                                            demo@example.com</a></li>
+
+                                </ul>
+                            </div> -->
+                            <!-- <div class="language_currency">
+                                <ul>
+
+                                    <li class="currency"><a href="#"> USD $ </a>
+
+                                    </li>
+                                    <li class="language"><a href="#"><img src="/user/assets/img/icon/language.png"
+                                                alt="">
+                                            English
+                                            <i class="icon-right ion-ios-arrow-down"></i></a>
+                                        <ul class="dropdown_language">
+                                            <li><a href="#">French</a></li>
+                                            <li><a href="#">Spanish</a></li>
+                                            <li><a href="#">Russian</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div> -->
+
+                            <div id="menu" class="text-left ">
+                                <ul class="offcanvas_main_menu">
+                                    <li class="menu-item-has-children">
+                                        <a href="/user/index">Home</a>
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="/user/shop">Shop</a>
+
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="/user/blog">blog</a>
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="/user/contact"> Contact Us</a>
+                                    </li>
+                                    <li class="menu-item-has-children">
+                                        <a href="/user/about">about Us</a>
+                                    </li>
+
+                                    <li class="menu-item-has-children">
+                                        <a href="/user/faq">FAQs </a>
+                                    </li>
+
+
+                                </ul>
+                            </div>
+                            <div class="offcanvas_footer">
+                                <span><a href="#"><i class="fa fa-envelope-o"></i> info@yourdomain.com</a></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--offcanvas menu area end-->
+
+        <header>
+            <div class="main_header">
+                <!-- <div class="header_top">
+                    <div class="container-fluid">
+                        <div class="row align-items-center">
+                            <div class="col-lg-5 col-md-5">
+                                <div class="header_contact_info">
+                                    <ul>
+                                        <li><a href="tel:0(1234)567890"><i class="icon-call-in"></i> 0(1234)567890</a>
+                                        </li>
+                                        <li><a href="mailto:http://1.envato.market/9LbxW"><i class="icon-envelope"></i>
+                                                demo@example.com</a></li>
+
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-lg-7 col-md-7">
+                                <div class="language_currency text-right">
+                                    <ul>
+
+                                        <li class="currency"><a href="#"> USD $ </a>
+
+                                        </li>
+                                        <li class="language"><a href="#"><img src="/user/assets/img/icon/language.png"
+                                                    alt="">
+                                                English <i class="icon-right ion-ios-arrow-down"></i></a>
+                                            <ul class="dropdown_language">
+                                                <li><a href="#">French</a></li>
+                                                <li><a href="#">Spanish</a></li>
+                                                <li><a href="#">Russian</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+                <div class="header_middle sticky-header">
+                    <div class="container-fluid">
+                        <div class="row align-items-center">
+                            <div class="col-lg-2 col-md-3 offset-md-5 offset-lg-0 col-5 offset-3 col-sm-5">
+                                <div class="logo">
+                                    <a href="/user/index"><img src="/user/assets/img/logo/logo.png" alt=""></a>
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                <!--main menu start-->
+                                <div class="main_menu">
+                                    <nav>
+                                        <ul>
+                                            <li><a href="/user/index">home</a>
+                                            </li>
+                                            <li><a href="/user/shop">shop</a>
+                                            </li>
+                                            <li><a href="/user/blog">blog</a>
+
+                                            </li>
+                                            <li><a href="/user/contact"> Contact Us</a></li>
+                                            <li><a href="/user/about"> About us</a></li>
+                                            <li><a href="/user/faq">FAQs</a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                                <!--main menu end-->
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-sm-4 col-4">
+                                <div class="header_account_area">
+                                    <div class="header_account_list search_list">
+                                        <a href="javascript:void(0)"><i class="icon-magnifier icons"></i></a>
+                                        <div class="dropdown_search">
+                                            <form action="#">
+                                                <input placeholder="Search entire store here ..." type="text">
+                                                <button type="submit"><i class="icon-magnifier icons"></i></button>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <div class="header_account_list  mini_cart_wrapper"
+                                        th:if="${session.loginCustomer != null}">
+                                        <a href="javascript:void(0)"><i class="icon-bag"></i>
+                                            <span class="item_count" th:text="${cartItemCount}">0</span>
+                                        </a>
+                                        <!--mini cart-->
+                                        <div class="mini_cart">
+                                            <div class="cart_gallery">
+                                                <div class="cart_item" th:each="cartItem : ${cartItems}">
+                                                    <div class="cart_img">
+                                                        <a
+                                                            th:href="@{/user/product-details/{id}(id=${cartItem.ProductId})}"><img
+                                                                th:src="@{'/productimages/' + ${cartItem.ProductImage}}"
+                                                                alt=""></a>
+                                                    </div>
+                                                    <div class="cart_info">
+                                                        <a
+                                                            th:href="@{/user/product-details/{id}(id=${cartItem.ProductId})}">[[${cartItem.ProductName}]]</a>
+                                                        <p>[[${cartItem.quantity}]] x <span>
+                                                                $[[${cartItem.ProductPrice}]]
+                                                            </span></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mini_cart_table">
+                                                <div class="cart_table_border">
+                                                    <div class="cart_total mt-10">
+                                                        <span>Total:</span>
+                                                        <span class="price">$[[${#numbers.formatDecimal(total, 2,
+                                                            2)}]]</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mini_cart_footer">
+                                                <div class="cart_button">
+                                                    <a href="/user/cart"><i class="fa fa-shopping-cart"></i> View
+                                                        cart</a>
+                                                </div>
+                                                <div class="cart_button">
+                                                    <a href="/user/checkout"><i class="fa fa-sign-in"></i> Checkout</a>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <!--mini cart end-->
+
+                                    </div>
+                                    <div class="header_account_list" th:if="${session.loginCustomer!=null}">
+                                        <a class="nav-link dropdown-toggle" href="/user/login" id="navbarDropdown"
+                                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="icon-user"></i>
+                                        </a>
+                                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                            <li><a class="dropdown-item" href="/user/my-account">My account</a></li>
+                                            <li>
+                                                <hr class="dropdown-divider">
+                                            </li>
+                                            <li><a class="dropdown-item" href="/user/logout">Logout</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="header_account_list" th:if="${session.loginCustomer==null}">
+                                        <a href="/user/login"><i class="icon-user"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!--header area end-->
+        <main>
+            <section th:insert="~{::mainContent}"></section>
+        </main>
+
+
+        <!--footer area start-->
+        <footer class="footer_widgets">
+            <div class="container">
+                <div class="footer_top">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-3 col-sm-3">
+                            <div class="widgets_container footer_contact">
+                                <h3>About us</h3>
+                                <div class="footer_desc">
+                                    <p>We are a beauty brand offering high-quality skincare and cosmetics.</p>
+                                </div>
+                                <div class="need_help">
+                                    <h4>NEED HELP?</h4>
+                                    <a href="#"><i class="icon-call-in"></i> 0(1234)567890</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-1 col-sm-1"></div>
+                        <div class="col-lg-2 col-md-3 col-sm-3">
+                            <div class="widgets_container widget_menu">
+                                <h3>Custom Links</h3>
+                                <div class="footer_menu">
+                                    <ul>
+                                        <li><a href="#">Legal Notice</a></li>
+                                        <li><a href="/user/shop">Products</a></li>
+                                        <li><a href="/user/blog">Blogs</a></li>
+                                        <li><a href="/user/contact">Contact</a></li>
+                                        <li><a href="/user/my-account">Profile</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-3 col-sm-3"></div>
+                        <div class="col-lg-3 col-md-5 col-sm-5">
+                            <div class="widgets_container widget_social">
+                                <h3>Follow us on</h3>
+                                <div class="footer_social">
+                                    <ul>
+                                        <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                                        <li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                                        <li><a href="#"><i class="fa fa-youtube-play" aria-hidden="true"></i></a></li>
+                                        <li><a href="#"><i class="fa fa-google" aria-hidden="true"></i></a></li>
+                                        <li><a href="#"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="footer_bottom">
+                    <div class="row align-items-center">
+                        <div class="col-lg-4 col-md-3">
+                            <div class="footer_logo">
+                                <a href="/user/index"><img src="/user/assets/img/logo/logo2.png" alt=""></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4">
+                            <div class="footer_link_menu">
+                                <ul>
+                                    <li><a href="#">Service</a></li>
+                                    <li><a href="/user/faq">FAQ</a></li>
+                                    <li><a href="#">Privacy Policy</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-5">
+                            <div class="copyright_area">
+                                <p>
+                                    © 2024 <span>Liora</span> <i class="fa fa-heart text-danger"
+                                        aria-hidden="true"></i><a href="#" target="_blank"> All
+                                        rights reserved.</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!--footer area end-->
+
+        <!-- modal area start-->
+        <div class="modal fade" id="modal_box" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"><i class="ion-android-close"></i></span>
+                    </button>
+                    <div class="modal_body">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-5 col-md-5 col-sm-12">
+                                    <div class="modal_tab">
+                                        <div class="tab-content product-details-large">
+                                            <div class="tab-pane fade show active" id="tab1" role="tabpanel">
+                                                <div class="modal_tab_img">
+                                                    <a href="#"><img src="/user/assets/img/product/productbig1.jpg"
+                                                            alt=""></a>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="tab2" role="tabpanel">
+                                                <div class="modal_tab_img">
+                                                    <a href="#"><img src="/user/assets/img/product/productbig2.jpg"
+                                                            alt=""></a>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="tab3" role="tabpanel">
+                                                <div class="modal_tab_img">
+                                                    <a href="#"><img src="/user/assets/img/product/productbig3.jpg"
+                                                            alt=""></a>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="tab4" role="tabpanel">
+                                                <div class="modal_tab_img">
+                                                    <a href="#"><img src="/user/assets/img/product/productbig4.jpg"
+                                                            alt=""></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal_tab_button">
+                                            <ul class="nav product_navactive owl-carousel" role="tablist">
+                                                <li>
+                                                    <a class="nav-link active" data-bs-toggle="tab" href="#tab1"
+                                                        role="tab" aria-controls="tab1" aria-selected="false"><img
+                                                            src="/user/assets/img/product/product11.jpg" alt=""></a>
+                                                </li>
+                                                <li>
+                                                    <a class="nav-link" data-bs-toggle="tab" href="#tab2" role="tab"
+                                                        aria-controls="tab2" aria-selected="false"><img
+                                                            src="/user/assets/img/product/product3.jpg" alt=""></a>
+                                                </li>
+                                                <li>
+                                                    <a class="nav-link button_three" data-bs-toggle="tab" href="#tab3"
+                                                        role="tab" aria-controls="tab3" aria-selected="false"><img
+                                                            src="/user/assets/img/product/product5.jpg" alt=""></a>
+                                                </li>
+                                                <li>
+                                                    <a class="nav-link" data-bs-toggle="tab" href="#tab4" role="tab"
+                                                        aria-controls="tab4" aria-selected="false"><img
+                                                            src="/user/assets/img/product/product14.jpg" alt=""></a>
+                                                </li>
+
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-7 col-md-7 col-sm-12">
+                                    <div class="modal_right">
+                                        <div class="modal_title mb-10">
+                                            <h2>Donec Ac Tempus</h2>
+                                        </div>
+                                        <div class="modal_price mb-10">
+                                            <span class="new_price">$64.99</span>
+                                            <span class="old_price">$78.99</span>
+                                        </div>
+                                        <div class="modal_description mb-15">
+                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Mollitia iste
+                                                laborum ad impedit pariatur esse optio tempora sint ullam autem deleniti
+                                                nam
+                                                in quos qui nemo ipsum numquam, reiciendis maiores quidem aperiam, rerum
+                                                vel
+                                                recusandae </p>
+                                        </div>
+                                        <div class="variants_selects">
+                                            <div class="variants_size">
+                                                <h2>size</h2>
+                                                <select class="select_option">
+                                                    <option selected value="1">s</option>
+                                                    <option value="1">m</option>
+                                                    <option value="1">l</option>
+                                                    <option value="1">xl</option>
+                                                    <option value="1">xxl</option>
+                                                </select>
+                                            </div>
+                                            <div class="variants_color">
+                                                <h2>color</h2>
+                                                <select class="select_option">
+                                                    <option selected value="1">purple</option>
+                                                    <option value="1">violet</option>
+                                                    <option value="1">black</option>
+                                                    <option value="1">pink</option>
+                                                    <option value="1">orange</option>
+                                                </select>
+                                            </div>
+                                            <div class="modal_add_to_cart">
+                                                <form action="#">
+                                                    <input min="1" max="100" step="2" value="1" type="number">
+                                                    <button type="submit">add to cart</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <div class="modal_social">
+                                            <h2>Share this product</h2>
+                                            <ul>
+                                                <li class="facebook"><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                                <li class="twitter"><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                                <li class="pinterest"><a href="#"><i class="fa fa-pinterest"></i></a>
+                                                </li>
+                                                <li class="google-plus"><a href="#"><i
+                                                            class="fa fa-google-plus"></i></a>
+                                                </li>
+                                                <li class="linkedin"><a href="#"><i class="fa fa-linkedin"></i></a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- modal area end-->
+
+
+        <!-- JS
+============================================ -->
+        <!--jquery min js-->
+        <script th:src="@{/user/assets/js/vendor/jquery-3.4.1.min.js}"></script>
+        <!--popper min js-->
+        <script th:src="@{/user/assets/js/popper.js}"></script>
+        <!--bootstrap min js-->
+        <script th:src="@{/user/assets/js/bootstrap.min.js}"></script>
+        <!--owl carousel min js-->
+        <script th:src="@{/user/assets/js/owl.carousel.min.js}"></script>
+        <!--slick min js-->
+        <script th:src="@{/user/assets/js/slick.min.js}"></script>
+        <!--magnific popup min js-->
+        <script th:src="@{/user/assets/js/jquery.magnific-popup.min.js}"></script>
+        <!--counterup min js-->
+        <script th:src="@{/user/assets/js/jquery.counterup.min.js}"></script>
+        <!--jquery countdown min js-->
+        <script th:src="@{/user/assets/js/jquery.countdown.js}"></script>
+        <!--jquery ui min js-->
+        <script th:src="@{/user/assets/js/jquery.ui.js}"></script>
+        <!--jquery elevatezoom min js-->
+        <script th:src="@{/user/assets/js/jquery.elevatezoom.js}"></script>
+        <!--isotope packaged min js-->
+        <script th:src="@{/user/assets/js/isotope.pkgd.min.js}"></script>
+        <!--slinky menu js-->
+        <script th:src="@{/user/assets/js/slinky.menu.js}"></script>
+        <!-- Plugins JS -->
+        <script th:src="@{/user/assets/js/plugins.js}"></script>
+
+        <!-- Main JS -->
+        <script th:src="@{/user/assets/js/main.js}"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.11.2/toastify.min.js"
+            integrity="sha512-zrRn+TvTc4KgDOtlKOgThphx1DGCZ8zR/xGWtG/WiKp6G+/xUBWow3p2lWu8DHfdHYWfwvIY0I89b3q22POHSw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                document.querySelectorAll('#add-to-cart-form').forEach(form => {
+                    form.addEventListener('submit', function (e) {
+                        e.preventDefault();
+
+                        const formData = new FormData(form);
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                        })
+                            .then(response => {
+                                if (response.redirected) {
+                                    window.location.href = response.url;
+                                } else if (response.ok) {
+                                    return response.json();
+                                } else if (response.status === 400) {
+                                    return response.json().then(data => {
+                                        throw new Error(data.message || 'Requested quantity exceeds available stock.');
+                                    });
+                                } else {
+                                    return Promise.reject(response);
+                                }
+                            })
+                            .then(data => {
+                                document.querySelector('.mini_cart_wrapper .item_count').textContent = data.cartItemCount;
+
+                                const cartGallery = document.querySelector('.cart_gallery');
+                                cartGallery.innerHTML = data.cartItems.map(cartItem => `
+                                        <div class="cart_item">
+                                            <div class="cart_img">
+                                                <a href="#"><img src="/productimages/${cartItem.productImage}" alt=""></a>
+                                            </div>
+                                            <div class="cart_info">
+                                                <a href="/user/product-details/${cartItem.productId}">${cartItem.productName}</a>
+                                                <p>${cartItem.quantity} x <span>$${cartItem.productPrice}</span></p>
+                                            </div>
+                                        </div>
+                                    `).join('');
+
+                                document.querySelector('.cart_total.mt-10 .price').textContent = `$${data.total.toFixed(2)}`;
+
+                                Toastify({
+                                    text: "Added to cart successfully.",
+                                    duration: 500,
+                                    gravity: "top",
+                                    position: 'right',
+                                    backgroundColor: "#4CAF50",
+                                }).showToast();
+                            })
+                            .catch(error => {
+                                if (error.message.includes("exceeds available stock")) {
+                                    Toastify({
+                                        text: 'Error: ' + error.message,
+                                        duration: 700,
+                                        gravity: "top",
+                                        position: 'right',
+                                        backgroundColor: "#f44336",
+                                    }).showToast();
+                                } else {
+                                    Toastify({
+                                        text: 'An unexpected error occurred.',
+                                        duration: 700,
+                                        gravity: "top",
+                                        position: 'right',
+                                        backgroundColor: "#f44336",
+                                    }).showToast();
+                                }
+                            });
+                    });
+                });
+            });
+        </script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    </div>
+
+
+</body>
+
+</html>

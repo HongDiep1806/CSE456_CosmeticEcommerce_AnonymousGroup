@@ -1,0 +1,208 @@
+<!doctype html>
+<html class="no-js" lang="en" xmlns:th="https://www.thymeleaf.org/">
+
+
+<head th:replace="~{user/layout :: pageHead('Shop')}">
+
+</head>
+
+<body>
+
+    <div th:replace="~{user/layout :: body}">
+        <section th:fragment="mainContent">
+            <!--breadcrumbs area start-->
+            <div class="breadcrumbs_area">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="breadcrumb_content">
+                                <h3>shop</h3>
+                                <ul>
+                                    <li><a href="/user/index">home</a></li>
+                                    <li>shop</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--breadcrumbs area end-->
+            <!--shop  area start-->
+            <div class="shop_area shop_reverse mb-60">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-12">
+                            <!--sidebar widget start-->
+                            <aside class="sidebar_widget">
+                                <div class="widget_inner">
+                                    <div class="widget_list widget_categories">
+                                        <h3>Category</h3>
+                                        <ul>
+                                            <li><a href="/user/shop">All</a></li>
+                                            <li th:each="category : ${categories}"
+                                                th:if="${category.CategoryStatus?.toLowerCase() == 'active'}">
+                                                <a th:text="${category.CategoryName}"
+                                                    th:href="@{'/user/shop?category=' + ${category.CategoryName}}"></a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="widget_list widget_filter">
+                                        <h3>Filter by price</h3>
+                                        <form th:action="@{/user/shop}" method="get">
+                                            <input type="hidden" name="category" th:value="${categoryName}" />
+                                            <input type="hidden" name="minPrice" id="minPrice" />
+                                            <input type="hidden" name="maxPrice" id="maxPrice" />
+                                            <div id="slider-range"></div>
+                                            <input type="text" id="amount" readonly />
+                                            <button type="submit">Filter</button>
+                                        </form>
+                                    </div>
+
+                                </div>
+                            </aside>
+                            <!--sidebar widget end-->
+                        </div>
+                        <div class="col-lg-9 col-md-12">
+                            <!--shop wrapper start-->
+
+                            <!--shop toolbar start-->
+                            <div class="shop_toolbar_wrapper">
+                                <div class="shop_toolbar_btn">
+
+
+                                </div>
+                                <!-- <div class=" niceselect_option">
+                                    <form class="select_option" action="#">
+                                        <select name="orderby" id="short">
+
+                                            <option selected value="1">Sort by average rating</option>
+                                            <option value="2">Sort by popularity</option>
+                                            <option value="3">Sort by newness</option>
+                                            <option value="4">Sort by price: low to high</option>
+                                            <option value="5">Sort by price: high to low</option>
+                                            <option value="6">Product Name: Z</option>
+                                        </select>
+                                    </form>
+                                </div> -->
+                                <div class="123">
+
+                                </div>
+                            </div>
+                            <!--shop toolbar end-->
+                            <div class="row shop_wrapper">
+                                <div class="col-lg-3 col-md-3 col-sm-6 col-12 " th:each="product : ${products}">
+                                    <div class="single_product">
+                                        <div class="product_thumb">
+                                            <a class="primary_img"
+                                                th:href="@{'/user/product-details/'+ ${product.ProductId}}"><img
+                                                    th:src="@{'/productimages/'+ ${product.ProductMainImage}}"
+                                                    alt=""></a>
+                                            <div class="action_links">
+                                                <ul>
+                                                    <li class="add_to_cart" style="display: inline-block;">
+                                                        <form id="add-to-cart-form" th:action="@{/user/cart/add}"
+                                                            method="POST" style="display: inline;">
+                                                            <input type="hidden" name="productId"
+                                                                th:value="${product.ProductId}" />
+                                                            <input type="hidden" name="quantity" value="1" />
+                                                            <button type="submit" class="add_to_cart_button">
+                                                                <i class="icon-bag icons"></i>
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="product_content grid_content">
+                                            <h4 class="product_name"><a
+                                                    th:href="@{'/user/product-details/'+ ${product.ProductId}}"
+                                                    th:text="${product.ProductName}">[[${product.ProductName}]]</a></h4>
+                                            <div class="price_box">
+                                                <span class="current_price">$[[${product.ProductPrice}]]</span>
+                                            </div>
+                                            <div class="product_rating">
+                                                <ul>
+                                                    <li><a href="#"><i class="ion-android-star"></i></a></li>
+                                                    <li><a href="#"><i class="ion-android-star"></i></a></li>
+                                                    <li><a href="#"><i class="ion-android-star"></i></a></li>
+                                                    <li><a href="#"><i class="ion-android-star"></i></a></li>
+                                                    <li><a href="#"><i class="ion-android-star"></i></a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pagination">
+                            <ul>
+                                <!-- Previous button -->
+                                <li th:if="${currentPage > 0}">
+                                    <a th:href="@{'/user/shop'(category=${categoryName}, page=${currentPage - 1})}">
+                                        << </a>
+                                </li>
+
+                                <!-- First page link -->
+                                <li th:if="${currentPage > 2}">
+                                    <a th:href="@{'/user/shop'(category=${categoryName}, page=0)}" th:text="'1'"></a>
+                                </li>
+
+                                <!-- Ellipsis if needed after the first page -->
+                                <li th:if="${currentPage > 2}">
+                                    <span>...</span>
+                                </li>
+
+                                <!-- Show page numbers around the current page -->
+                                <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                                    th:if="${i >= currentPage - 1 && i <= currentPage + 1}"
+                                    th:classappend="${i == currentPage} ? 'current'">
+                                    <a th:href="@{'/user/shop'(category=${categoryName}, page=${i})}"
+                                        th:text="${i + 1}"></a>
+                                </li>
+
+                                <!-- Ellipsis if needed before the last page -->
+                                <li th:if="${currentPage < totalPages - 3}">
+                                    <span>...</span>
+                                </li>
+
+                                <!-- Last page link -->
+                                <li th:if="${currentPage < totalPages - 2}">
+                                    <a th:href="@{'/user/shop'(category=${categoryName}, page=${totalPages - 1})}"
+                                        th:text="${totalPages}"></a>
+                                </li>
+
+                                <!-- Next button -->
+                                <li th:if="${currentPage < totalPages - 1}">
+                                    <a
+                                        th:href="@{'/user/shop'(category=${categoryName}, page=${currentPage + 1})}">>></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--shop  area end-->
+
+        </section>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $("#slider-range").slider({
+                range: true,
+                min: 0,
+                max: 1000,
+                values: [0, 1000],
+                slide: function (event, ui) {
+                    $("#amount").val("$" + ui.values[0] + " - $" + ui.values[1]);
+                    $('input[name="minPrice"]').val(ui.values[0]);
+                    $('input[name="maxPrice"]').val(ui.values[1]);
+                }
+            });
+            $("#amount").val("$" + $("#slider-range").slider("values", 0) + " - $" + $("#slider-range").slider("values", 1));
+        });
+    </script>
+</body>
+
+
+</html>
