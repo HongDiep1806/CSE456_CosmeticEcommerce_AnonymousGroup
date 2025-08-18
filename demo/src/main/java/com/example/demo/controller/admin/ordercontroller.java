@@ -1,122 +1,87 @@
 package com.example.demo.controller.admin;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.example.demo.model.orders;
+import com.example.demo.model.ordersdto;
+import com.example.demo.repository.adminrepository;
+import com.example.demo.service.OrderService;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.example.demo.model.*;
-import com.example.demo.repository.*;
-
-import jakarta.servlet.http.HttpSession;
+import java.util.List;
 
 @Controller
 @RequestMapping("admin")
 public class ordercontroller {
 
-    @Autowired
-    orderrepository orderrepo;
-
-    @Autowired
-    orderdetailrepository orderdetailsrepo;
-
-    @Autowired
-    productrepository productrepo;
-
-    @Autowired
-    customerrepository customerrepo;
-
-    @Autowired
-    adminrepository adminrepo;
+    @Autowired private OrderService orderService;
+    @Autowired private adminrepository adminrepo;
 
     @ModelAttribute("loggedInAdminName")
     public String getLoggedInAdminName(HttpSession session) {
         Integer adminId = (Integer) session.getAttribute("loginAdmin");
         Integer superId = (Integer) session.getAttribute("loginSuper");
-
-        if (adminId != null) {
-            return adminrepo.findById(adminId).get().getAdminName();
-        } else if (superId != null) {
-            return adminrepo.findById(superId).get().getAdminName();
-        } else {
-            return null;
-        }
+        if (adminId != null) return adminrepo.findById(adminId).get().getAdminName();
+        if (superId != null) return adminrepo.findById(superId).get().getAdminName();
+        return null;
     }
-    
+
+    private boolean isLoggedIn(HttpSession session) {
+        return session.getAttribute("loginAdmin") != null || session.getAttribute("loginSuper") != null;
+    }
+
+    // ============= DETAILS =============
     @GetMapping("apps-ecommerce-order-details/{id}")
-    public String orderdetail(@PathVariable("id") int id, Model model, RedirectAttributes redirectAttributes,
-            HttpSession session) {
-        Integer adminId = (Integer) session.getAttribute("loginAdmin");
-        Integer superId = (Integer) session.getAttribute("loginSuper");
-
-        if (adminId == null && superId == null) {
+    public String orderdetail(@PathVariable("id") int id,
+                              Model model,
+                              RedirectAttributes redirectAttributes,
+                              HttpSession session) {
+        if (!isLoggedIn(session)) {
             redirectAttributes.addFlashAttribute("loginRequired", "Please log in to view this page.");
             return "redirect:/admin/auth-signin-basic";
         }
-        orders order = orderrepo.findById(id).orElse(null);
-        customers customer = customerrepo.findById(order.getCustomer().getCustomerId()).orElse(null);
 
-        List<orderdetails> orderDetailsList = orderdetailsrepo.findByOrderId(id);
-        List<orderdetailsdto> orderDetailsDTOs = new ArrayList<>();
-        for (orderdetails orderDetail : orderDetailsList) {
-            products product = productrepo.findById(orderDetail.getProductId()).orElse(null);
-            if (product != null) {
-                orderdetailsdto dto = new orderdetailsdto();
-                dto.setProductId(product.getProductId());
-                dto.setProductName(product.getProductName());
-                dto.setProductMainImage(product.getProductMainImage());
-                dto.setQuantity(orderDetail.getProductQuantity());
-                dto.setProductPrice(product.getProductPrice());
-                dto.setTotalPrice(orderDetail.getProductPrice() * orderDetail.getProductQuantity());
-                orderDetailsDTOs.add(dto);
-            }
+        OrderService.OrderDetailsVM vm = orderService.buildOrderDetails(id);
+        if (vm == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Order not found!");
+            return "redirect:/admin/apps-ecommerce-orders";
         }
 
-        model.addAttribute("customers", customer);
-        model.addAttribute("orders", order);
-        model.addAttribute("orderDetails", orderDetailsDTOs);
-        return ("admin/apps-ecommerce-order-details");
+        model.addAttribute("customers", vm.getCustomer());
+        model.addAttribute("orders", vm.getOrder());
+        model.addAttribute("orderDetails", vm.getItems());
+        return "admin/apps-ecommerce-order-details";
     }
 
+    // ============= LIST =============
     @GetMapping("apps-ecommerce-orders")
-    public String orders(Model model, RedirectAttributes redirectAttributes, HttpSession session) {
-        Integer adminId = (Integer) session.getAttribute("loginAdmin");
-        Integer superId = (Integer) session.getAttribute("loginSuper");
-
-        if (adminId == null && superId == null) {
+    public String orders(Model model,
+                         RedirectAttributes redirectAttributes,
+                         HttpSession session) {
+        if (!isLoggedIn(session)) {
             redirectAttributes.addFlashAttribute("loginRequired", "Please log in to view this page.");
             return "redirect:/admin/auth-signin-basic";
         }
-        List<orders> order = (List<orders>) orderrepo.findAll();
-        model.addAttribute("orders", order);
-        return ("admin/apps-ecommerce-orders");
+        List<orders> orderList = orderService.getAllOrders();
+        model.addAttribute("orders", orderList);
+        return "admin/apps-ecommerce-orders";
     }
 
+    // ============= UPDATE STATUS =============
     @PostMapping("/editOrder")
-    public String saveEditedCategory(@ModelAttribute("ordersdto") ordersdto ordersdto,
-            BindingResult result) {
-        if (result.hasErrors()) {
-            return "admin/apps-ecommerce-orders";
+    public String saveEditedOrder(@ModelAttribute("ordersdto") ordersdto ordersdto,
+                                  BindingResult result,
+                                  RedirectAttributes redirectAttributes) {
+        boolean ok = orderService.updateOrderStatus(ordersdto, result);
+        if (!ok || result.hasErrors()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Cannot update order.");
+            return "redirect:/admin/apps-ecommerce-orders";
         }
-
-        Integer orderId = ordersdto.getOrderId();
-        orders existingOrder = orderrepo.findById(orderId).orElse(null);
-        if (existingOrder == null) {
-            result.addError(new FieldError("ordersdto", "OrderId", "Order not found!"));
-            return "admin/apps-ecommerce-orders";
-        }
-
-        existingOrder.setOrderStatus(ordersdto.getOrderStatus());
-
-        orderrepo.save(existingOrder);
-
         return "redirect:/admin/apps-ecommerce-orders";
     }
-
 }

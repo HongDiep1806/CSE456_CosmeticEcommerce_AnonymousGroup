@@ -7,7 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import com.example.demo.model.blogs;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface blogrepository extends CrudRepository<blogs, Integer> {
 
     @Query(value = "SELECT COALESCE(MAX(id), 0) + 1 FROM  blogs", nativeQuery = true)

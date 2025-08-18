@@ -104,7 +104,6 @@ public class productcontroller {
             return "admin/apps-ecommerce-add-product";
         }
 
-        // Thư mục productimages khi app đang chạy (localhost)
         String uploadDir = new File("uploads/productimages").getAbsolutePath();
         Path uploadPath = Paths.get(uploadDir);
 
