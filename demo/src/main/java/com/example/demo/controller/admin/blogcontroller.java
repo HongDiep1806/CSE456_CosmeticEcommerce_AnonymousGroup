@@ -1,5 +1,6 @@
 package com.example.demo.controller.admin;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -8,6 +9,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 
+import com.example.demo.service.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
@@ -22,7 +24,6 @@ import com.example.demo.model.blogs;
 import com.example.demo.model.blogsdto;
 import com.example.demo.repository.*;
 
-import jakarta.persistence.criteria.CriteriaBuilder.In;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -34,6 +35,8 @@ public class blogcontroller {
 
     @Autowired
     blogrepository blogrepo;
+    @Autowired
+    public BlogService blogService;
 
     @ModelAttribute("loggedInAdminName")
     public String getLoggedInAdminName(HttpSession session) {
@@ -48,7 +51,7 @@ public class blogcontroller {
             return null;
         }
     }
-
+    //done
     @GetMapping("apps-ecommerce-blog")
     public String blog(Model model, RedirectAttributes redirectAttributes, HttpSession session) {
         Integer adminId = (Integer) session.getAttribute("loginAdmin");
@@ -58,11 +61,11 @@ public class blogcontroller {
             redirectAttributes.addFlashAttribute("loginRequired", "Please log in to view this page.");
             return "redirect:/admin/auth-signin-basic";
         }
-        List<blogs> blogs = (List<blogs>) blogrepo.findAll();
+        List<blogs> blogs = blogService.findAll();
         model.addAttribute("blogs", blogs);
         return ("admin/apps-ecommerce-blog");
     }
-
+    //done
     @GetMapping("apps-ecommerce-create-blog")
     public String addproduct(Model model, RedirectAttributes redirectAttributes, HttpSession session) {
         Integer adminId = (Integer) session.getAttribute("loginAdmin");
@@ -72,86 +75,72 @@ public class blogcontroller {
             redirectAttributes.addFlashAttribute("loginRequired", "Please log in to view this page.");
             return "redirect:/admin/auth-signin-basic";
         }
-        List<blogs> blogs = (List<blogs>) blogrepo.findAll();
+        List<blogs> blogs = blogService.findAll();
         model.addAttribute("blogs", blogs);
-
         blogsdto blogsdto = new blogsdto();
-        int nextBlogId = blogrepo.findNextBlogId();
+        int nextBlogId = blogService.findNextBlogId();
         blogsdto.setBlogId(nextBlogId);
         model.addAttribute("blogsdto", blogsdto);
         return ("admin/apps-ecommerce-create-blog");
     }
 
+    //done
     @PostMapping("apps-ecommerce-create-blog/save")
-    public String saveProduct(@ModelAttribute("blogsdto") blogsdto blogsdto, BindingResult result,
-            HttpSession session) {
+    public String saveProduct(@ModelAttribute("blogsdto") blogsdto blogsdto,
+                              BindingResult result,
+                              HttpSession session) {
+
         Integer adminId = (Integer) session.getAttribute("loginAdmin");
         Integer superId = (Integer) session.getAttribute("loginSuper");
 
+        // Validate form
         if (result.hasErrors()) {
             return "admin/apps-ecommerce-create-blog";
         }
-
-        if (blogsdto.getBlogImage().isEmpty()) {
+        if (blogsdto.getBlogImage() == null || blogsdto.getBlogImage().isEmpty()) {
             result.addError(new FieldError("blogsdto", "BlogImage", "BlogImage is required"));
             return "admin/apps-ecommerce-create-blog";
         }
 
-        MultipartFile image = blogsdto.getBlogImage();
-        String storagefilename = image.getOriginalFilename();
+        // Thư mục uploads tương đối
+        String uploadDir = new File("uploads/blogimages").getAbsolutePath();
+        Path uploadPath = Paths.get(uploadDir);
 
-        String uploaddir = "C:\\Users\\Admin\\Downloads\\Cosmetic\\projectB_cse311\\demo\\src\\main\\resources\\static\\blogimages";
-        Path uploadpath = Paths.get(uploaddir);
-
+        // Tạo thư mục nếu chưa có
         try {
-
-            if (!Files.exists(uploadpath)) {
-                Files.createDirectories(uploadpath);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
             }
-
-            try (InputStream inputStream = image.getInputStream()) {
-                Path targetPath = uploadpath.resolve(storagefilename);
-
-                System.out.println("Target File Path: " + targetPath.toString());
-                if (!Files.exists(targetPath)) {
-                    Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
-                } else {
-                    System.out.println("File already exists: " + targetPath.toString());
-                }
-            }
-
         } catch (IOException e) {
-
-            System.out.println("Error occurred while saving image: " + e.getMessage());
-            result.addError(new FieldError("blogsdto", "ProductMainImage", "Unable to save the image. Try again."));
+            result.addError(new FieldError("blogsdto", "BlogImage", "Unable to create upload directory."));
             return "admin/apps-ecommerce-create-blog";
         }
 
-        blogs bl = new blogs();
-        bl.setBlogId(blogsdto.getBlogId());
-        bl.setBlogTitle(blogsdto.getBlogTitle());
-        bl.setBlogDescription(blogsdto.getBlogDescription());
-        bl.setBlogStatus(blogsdto.getBlogStatus());
-        bl.setBlogCreateDate(blogsdto.getBlogCreateDate());
-        if (adminId != null) {
-            bl.setBlogPostBy(adminrepo.findById(adminId).get().getAdminName());
-        } else if (superId != null) {
-            bl.setBlogPostBy(adminrepo.findById(superId).get().getAdminName());
-        }
-        bl.setBlogtag(blogsdto.getBlogtag());
-        bl.setBlogImage(storagefilename);
+        // Lưu file ảnh
+        MultipartFile image = blogsdto.getBlogImage();
+        String storageFilename = image.getOriginalFilename();
 
-        blogrepo.save(bl);
+        try (InputStream inputStream = image.getInputStream()) {
+            Files.copy(inputStream, uploadPath.resolve(storageFilename), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            result.addError(new FieldError("blogsdto", "BlogImage", "Unable to save the image."));
+            return "admin/apps-ecommerce-create-blog";
+        }
+
+        blogService.saveNewBlog(blogsdto, adminId, superId, storageFilename);
 
         return "redirect:/admin/apps-ecommerce-blog";
     }
 
+
+    //done
     @GetMapping("/set-current-blog-id/{id}")
     public String setCurrentBlogId(@PathVariable("id") int id, HttpSession session) {
         session.setAttribute("currentBlogId", id);
         return "redirect:/admin/apps-ecommerce-edit-blog";
     }
 
+    //done
     @GetMapping("/apps-ecommerce-edit-blog")
     public String showEditForm(HttpSession session, Model model, RedirectAttributes redirectAttributes) {
         Integer adminId = (Integer) session.getAttribute("loginAdmin");
@@ -161,36 +150,30 @@ public class blogcontroller {
             redirectAttributes.addFlashAttribute("loginRequired", "Please log in to view this page.");
             return "redirect:/admin/auth-signin-basic";
         }
+
         Integer blogId = (Integer) session.getAttribute("currentBlogId");
         if (blogId == null) {
             model.addAttribute("errorMessage", "No blog selected!");
             return "admin/apps-ecommerce-edit-blog";
         }
 
-        blogs blog = blogrepo.findById(blogId).orElse(null);
-        if (blog == null) {
+        blogsdto blogsdto = blogService.getBlogDtoById(blogId);
+        if (blogsdto == null) {
             model.addAttribute("errorMessage", "Blog not found!");
             return "admin/apps-ecommerce-edit-blog";
         }
 
-        blogsdto blogsdto = new blogsdto();
-        blogsdto.setBlogId(blog.getBlogId());
-        blogsdto.setBlogTitle(blog.getBlogTitle());
-        blogsdto.setBlogDescription(blog.getBlogDescription());
-        blogsdto.setBlogStatus(blog.getBlogStatus());
-        blogsdto.setBlogCreateDate(blog.getBlogCreateDate());
-        blogsdto.setBlogPostBy(blog.getBlogPostBy());
-        blogsdto.setBlogtag(blog.getBlogtag());
-
+        // Add attributes to view
         model.addAttribute("blogsdto", blogsdto);
-        model.addAttribute("existingImage", "/blogimages/" + blog.getBlogImage());
+        model.addAttribute("existingImage", "/blogimages/" + blogService.getBlogImageFilename(blogId)); // có thể thêm hàm riêng nếu cần
 
         return "admin/apps-ecommerce-edit-blog";
     }
-
+    //done
     @PostMapping("/apps-ecommerce-edit-blog")
-    public String saveEditedBlog(@ModelAttribute("blogsdto") blogsdto blogsdto, BindingResult result,
-            HttpSession session) {
+    public String saveEditedBlog(@ModelAttribute("blogsdto") blogsdto blogsdto,
+                                 BindingResult result,
+                                 HttpSession session) {
         Integer adminId = (Integer) session.getAttribute("loginAdmin");
         Integer superId = (Integer) session.getAttribute("loginSuper");
 
@@ -198,64 +181,24 @@ public class blogcontroller {
             return "admin/apps-ecommerce-edit-blog";
         }
 
-        blogs bl = blogrepo.findById(blogsdto.getBlogId()).orElse(null);
-        if (bl == null) {
-            result.addError(new FieldError("blogsdto", "blogId", "Blog not found!"));
+        boolean success = blogService.updateBlog(blogsdto, adminId, superId, result);
+        if (!success) {
             return "admin/apps-ecommerce-edit-blog";
         }
-
-        String uploadDir = "C:\\Users\\Admin\\Downloads\\Cosmetic\\projectB_cse311\\demo\\src\\main\\resources\\static\\blogimages";
-        Path uploadPath = Paths.get(uploadDir);
-
-        MultipartFile image = blogsdto.getBlogImage();
-        if (image != null && !image.isEmpty()) {
-            String storageFilename = image.getOriginalFilename();
-            try {
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
-                }
-                try (InputStream inputStream = image.getInputStream()) {
-                    Path targetPath = uploadPath.resolve(storageFilename);
-                    Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
-                }
-                bl.setBlogImage(storageFilename);
-            } catch (IOException e) {
-                result.addError(
-                        new FieldError("blogsdto", "BlogImage", "Unable to save the image. Try again."));
-                return "admin/apps-ecommerce-edit-blog";
-            }
-        } else {
-            bl.setBlogImage(bl.getBlogImage());
-        }
-
-        bl.setBlogTitle(blogsdto.getBlogTitle());
-        bl.setBlogDescription(blogsdto.getBlogDescription());
-        bl.setBlogStatus(blogsdto.getBlogStatus());
-        bl.setBlogCreateDate(blogsdto.getBlogCreateDate());
-        if (adminId != null) {
-            bl.setBlogPostBy(adminrepo.findById(adminId).get().getAdminName());
-        } else if (superId != null) {
-            bl.setBlogPostBy(adminrepo.findById(superId).get().getAdminName());
-        }
-        bl.setBlogtag(blogsdto.getBlogtag());
-
-        blogrepo.save(bl);
 
         return "redirect:/admin/apps-ecommerce-blog";
     }
 
     @GetMapping("/deleteblog/{id}")
     public String deleteblog(@PathVariable("id") int id, RedirectAttributes redirectAttributes) {
-        try {
-            blogrepo.deleteById(id);
+        boolean deleted = blogService.deleteBlogById(id);
+
+        if (deleted) {
             redirectAttributes.addFlashAttribute("successMessage", "Blog deleted successfully!");
-        } catch (EmptyResultDataAccessException e) {
+        } else {
             redirectAttributes.addFlashAttribute("errorMessage", "Blog not found or already deleted.");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while deleting the blog.");
         }
 
         return "redirect:/admin/apps-ecommerce-blog";
     }
-
 }
