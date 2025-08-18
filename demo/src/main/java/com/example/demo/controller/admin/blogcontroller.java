@@ -1,5 +1,6 @@
 package com.example.demo.controller.admin;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -82,69 +83,134 @@ public class blogcontroller {
         return ("admin/apps-ecommerce-create-blog");
     }
 
+//    @PostMapping("apps-ecommerce-create-blog/save")
+//    public String saveProduct(@ModelAttribute("blogsdto") blogsdto blogsdto, BindingResult result,
+//            HttpSession session) {
+//        Integer adminId = (Integer) session.getAttribute("loginAdmin");
+//        Integer superId = (Integer) session.getAttribute("loginSuper");
+//
+//        if (result.hasErrors()) {
+//            return "admin/apps-ecommerce-create-blog";
+//        }
+//
+//        if (blogsdto.getBlogImage().isEmpty()) {
+//            result.addError(new FieldError("blogsdto", "BlogImage", "BlogImage is required"));
+//            return "admin/apps-ecommerce-create-blog";
+//        }
+//
+//        MultipartFile image = blogsdto.getBlogImage();
+//        String storagefilename = image.getOriginalFilename();
+//
+//        String uploaddir = "C:\\Users\\Admin\\Downloads\\Cosmetic\\projectB_cse311\\demo\\src\\main\\resources\\static\\blogimages";
+//        Path uploadpath = Paths.get(uploaddir);
+//
+//        try {
+//
+//            if (!Files.exists(uploadpath)) {
+//                Files.createDirectories(uploadpath);
+//            }
+//
+//            try (InputStream inputStream = image.getInputStream()) {
+//                Path targetPath = uploadpath.resolve(storagefilename);
+//
+//                System.out.println("Target File Path: " + targetPath.toString());
+//                if (!Files.exists(targetPath)) {
+//                    Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
+//                } else {
+//                    System.out.println("File already exists: " + targetPath.toString());
+//                }
+//            }
+//
+//        } catch (IOException e) {
+//
+//            System.out.println("Error occurred while saving image: " + e.getMessage());
+//            result.addError(new FieldError("blogsdto", "ProductMainImage", "Unable to save the image. Try again."));
+//            return "admin/apps-ecommerce-create-blog";
+//        }
+//
+//        blogs bl = new blogs();
+//        bl.setBlogId(blogsdto.getBlogId());
+//        bl.setBlogTitle(blogsdto.getBlogTitle());
+//        bl.setBlogDescription(blogsdto.getBlogDescription());
+//        bl.setBlogStatus(blogsdto.getBlogStatus());
+//        bl.setBlogCreateDate(blogsdto.getBlogCreateDate());
+//        if (adminId != null) {
+//            bl.setBlogPostBy(adminrepo.findById(adminId).get().getAdminName());
+//        } else if (superId != null) {
+//            bl.setBlogPostBy(adminrepo.findById(superId).get().getAdminName());
+//        }
+//        bl.setBlogtag(blogsdto.getBlogtag());
+//        bl.setBlogImage(storagefilename);
+//
+//        blogrepo.save(bl);
+//
+//        return "redirect:/admin/apps-ecommerce-blog";
+//    }
+
     @PostMapping("apps-ecommerce-create-blog/save")
-    public String saveProduct(@ModelAttribute("blogsdto") blogsdto blogsdto, BindingResult result,
-            HttpSession session) {
+    public String saveProduct(@ModelAttribute("blogsdto") blogsdto blogsdto,
+                              BindingResult result,
+                              HttpSession session) {
         Integer adminId = (Integer) session.getAttribute("loginAdmin");
         Integer superId = (Integer) session.getAttribute("loginSuper");
 
+        // Validate form
         if (result.hasErrors()) {
             return "admin/apps-ecommerce-create-blog";
         }
-
-        if (blogsdto.getBlogImage().isEmpty()) {
+        if (blogsdto.getBlogImage() == null || blogsdto.getBlogImage().isEmpty()) {
+            // Lưu ý: tên field phải khớp với property trong blogsdto (ví dụ: "BlogImage" hoặc "blogImage")
             result.addError(new FieldError("blogsdto", "BlogImage", "BlogImage is required"));
             return "admin/apps-ecommerce-create-blog";
         }
 
-        MultipartFile image = blogsdto.getBlogImage();
-        String storagefilename = image.getOriginalFilename();
+        // Thư mục uploads tương đối (giống cách làm của add-product)
+        String uploadDir = new File("uploads/blogimages").getAbsolutePath();
+        Path uploadPath = Paths.get(uploadDir);
 
-        String uploaddir = "C:\\Users\\Admin\\Downloads\\Cosmetic\\projectB_cse311\\demo\\src\\main\\resources\\static\\blogimages";
-        Path uploadpath = Paths.get(uploaddir);
-
+        // Tạo thư mục nếu chưa có
         try {
-
-            if (!Files.exists(uploadpath)) {
-                Files.createDirectories(uploadpath);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
             }
-
-            try (InputStream inputStream = image.getInputStream()) {
-                Path targetPath = uploadpath.resolve(storagefilename);
-
-                System.out.println("Target File Path: " + targetPath.toString());
-                if (!Files.exists(targetPath)) {
-                    Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
-                } else {
-                    System.out.println("File already exists: " + targetPath.toString());
-                }
-            }
-
         } catch (IOException e) {
-
-            System.out.println("Error occurred while saving image: " + e.getMessage());
-            result.addError(new FieldError("blogsdto", "ProductMainImage", "Unable to save the image. Try again."));
+            result.addError(new FieldError("blogsdto", "BlogImage", "Unable to create upload directory."));
             return "admin/apps-ecommerce-create-blog";
         }
 
+        // Lưu file ảnh
+        MultipartFile image = blogsdto.getBlogImage();
+        String storageFilename = image.getOriginalFilename();
+
+        try (InputStream inputStream = image.getInputStream()) {
+            Files.copy(inputStream, uploadPath.resolve(storageFilename), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            result.addError(new FieldError("blogsdto", "BlogImage", "Unable to save the image."));
+            return "admin/apps-ecommerce-create-blog";
+        }
+
+        // Lưu dữ liệu blog
         blogs bl = new blogs();
         bl.setBlogId(blogsdto.getBlogId());
         bl.setBlogTitle(blogsdto.getBlogTitle());
         bl.setBlogDescription(blogsdto.getBlogDescription());
         bl.setBlogStatus(blogsdto.getBlogStatus());
         bl.setBlogCreateDate(blogsdto.getBlogCreateDate());
+
         if (adminId != null) {
             bl.setBlogPostBy(adminrepo.findById(adminId).get().getAdminName());
         } else if (superId != null) {
             bl.setBlogPostBy(adminrepo.findById(superId).get().getAdminName());
         }
+
         bl.setBlogtag(blogsdto.getBlogtag());
-        bl.setBlogImage(storagefilename);
+        bl.setBlogImage(storageFilename);
 
         blogrepo.save(bl);
 
         return "redirect:/admin/apps-ecommerce-blog";
     }
+
 
     @GetMapping("/set-current-blog-id/{id}")
     public String setCurrentBlogId(@PathVariable("id") int id, HttpSession session) {
@@ -188,9 +254,66 @@ public class blogcontroller {
         return "admin/apps-ecommerce-edit-blog";
     }
 
+//    @PostMapping("/apps-ecommerce-edit-blog")
+//    public String saveEditedBlog(@ModelAttribute("blogsdto") blogsdto blogsdto, BindingResult result,
+//            HttpSession session) {
+//        Integer adminId = (Integer) session.getAttribute("loginAdmin");
+//        Integer superId = (Integer) session.getAttribute("loginSuper");
+//
+//        if (result.hasErrors()) {
+//            return "admin/apps-ecommerce-edit-blog";
+//        }
+//
+//        blogs bl = blogrepo.findById(blogsdto.getBlogId()).orElse(null);
+//        if (bl == null) {
+//            result.addError(new FieldError("blogsdto", "blogId", "Blog not found!"));
+//            return "admin/apps-ecommerce-edit-blog";
+//        }
+//
+//        String uploadDir = "C:\\Users\\Admin\\Downloads\\Cosmetic\\projectB_cse311\\demo\\src\\main\\resources\\static\\blogimages";
+//        Path uploadPath = Paths.get(uploadDir);
+//
+//        MultipartFile image = blogsdto.getBlogImage();
+//        if (image != null && !image.isEmpty()) {
+//            String storageFilename = image.getOriginalFilename();
+//            try {
+//                if (!Files.exists(uploadPath)) {
+//                    Files.createDirectories(uploadPath);
+//                }
+//                try (InputStream inputStream = image.getInputStream()) {
+//                    Path targetPath = uploadPath.resolve(storageFilename);
+//                    Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
+//                }
+//                bl.setBlogImage(storageFilename);
+//            } catch (IOException e) {
+//                result.addError(
+//                        new FieldError("blogsdto", "BlogImage", "Unable to save the image. Try again."));
+//                return "admin/apps-ecommerce-edit-blog";
+//            }
+//        } else {
+//            bl.setBlogImage(bl.getBlogImage());
+//        }
+//
+//        bl.setBlogTitle(blogsdto.getBlogTitle());
+//        bl.setBlogDescription(blogsdto.getBlogDescription());
+//        bl.setBlogStatus(blogsdto.getBlogStatus());
+//        bl.setBlogCreateDate(blogsdto.getBlogCreateDate());
+//        if (adminId != null) {
+//            bl.setBlogPostBy(adminrepo.findById(adminId).get().getAdminName());
+//        } else if (superId != null) {
+//            bl.setBlogPostBy(adminrepo.findById(superId).get().getAdminName());
+//        }
+//        bl.setBlogtag(blogsdto.getBlogtag());
+//
+//        blogrepo.save(bl);
+//
+//        return "redirect:/admin/apps-ecommerce-blog";
+//    }
+
     @PostMapping("/apps-ecommerce-edit-blog")
-    public String saveEditedBlog(@ModelAttribute("blogsdto") blogsdto blogsdto, BindingResult result,
-            HttpSession session) {
+    public String saveEditedBlog(@ModelAttribute("blogsdto") blogsdto blogsdto,
+                                 BindingResult result,
+                                 HttpSession session) {
         Integer adminId = (Integer) session.getAttribute("loginAdmin");
         Integer superId = (Integer) session.getAttribute("loginSuper");
 
@@ -198,36 +321,44 @@ public class blogcontroller {
             return "admin/apps-ecommerce-edit-blog";
         }
 
+        // Tìm blog theo id
         blogs bl = blogrepo.findById(blogsdto.getBlogId()).orElse(null);
         if (bl == null) {
             result.addError(new FieldError("blogsdto", "blogId", "Blog not found!"));
             return "admin/apps-ecommerce-edit-blog";
         }
 
-        String uploadDir = "C:\\Users\\Admin\\Downloads\\Cosmetic\\projectB_cse311\\demo\\src\\main\\resources\\static\\blogimages";
+        // Thư mục uploads tương đối (tránh hard-code đường dẫn tuyệt đối)
+        String uploadDir = new File("uploads/blogimages").getAbsolutePath();
         Path uploadPath = Paths.get(uploadDir);
 
+        // Tạo thư mục nếu chưa có
+        try {
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+        } catch (IOException e) {
+            // Chú ý: tên field phải đúng với property trong DTO, ví dụ "BlogImage" hoặc "blogImage"
+            result.addError(new FieldError("blogsdto", "BlogImage", "Unable to create upload directory."));
+            return "admin/apps-ecommerce-edit-blog";
+        }
+
+        // Nếu có upload ảnh mới -> lưu và cập nhật tên file
         MultipartFile image = blogsdto.getBlogImage();
         if (image != null && !image.isEmpty()) {
             String storageFilename = image.getOriginalFilename();
-            try {
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
-                }
-                try (InputStream inputStream = image.getInputStream()) {
-                    Path targetPath = uploadPath.resolve(storageFilename);
-                    Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
-                }
+
+            try (InputStream inputStream = image.getInputStream()) {
+                Files.copy(inputStream, uploadPath.resolve(storageFilename), StandardCopyOption.REPLACE_EXISTING);
                 bl.setBlogImage(storageFilename);
             } catch (IOException e) {
-                result.addError(
-                        new FieldError("blogsdto", "BlogImage", "Unable to save the image. Try again."));
+                result.addError(new FieldError("blogsdto", "BlogImage", "Unable to save the image. Try again."));
                 return "admin/apps-ecommerce-edit-blog";
             }
-        } else {
-            bl.setBlogImage(bl.getBlogImage());
         }
+        // Nếu không có ảnh mới -> giữ nguyên ảnh cũ (không cần set lại)
 
+        // Cập nhật các trường còn lại
         bl.setBlogTitle(blogsdto.getBlogTitle());
         bl.setBlogDescription(blogsdto.getBlogDescription());
         bl.setBlogStatus(blogsdto.getBlogStatus());
@@ -243,6 +374,7 @@ public class blogcontroller {
 
         return "redirect:/admin/apps-ecommerce-blog";
     }
+
 
     @GetMapping("/deleteblog/{id}")
     public String deleteblog(@PathVariable("id") int id, RedirectAttributes redirectAttributes) {
