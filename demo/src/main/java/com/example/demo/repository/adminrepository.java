@@ -4,7 +4,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import com.example.demo.model.admin;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface adminrepository extends CrudRepository<admin, Integer> {
 
     @Query("SELECT COUNT(a) > 0 FROM admin a WHERE a.AdminEmail = ?1")
