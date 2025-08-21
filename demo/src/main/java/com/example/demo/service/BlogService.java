@@ -131,7 +131,7 @@ public class BlogService {
 
             if (imageFile.exists()) {
                 if (!imageFile.delete()) {
-                    System.err.println("⚠ Không thể xóa ảnh: " + imagePath);
+                    System.err.println("Không thể xóa ảnh: " + imagePath);
                 }
             }
         }
