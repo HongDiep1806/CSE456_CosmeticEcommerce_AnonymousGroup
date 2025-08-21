@@ -166,4 +166,7 @@ public class AdminService {
         existingAdmin.setAdminStatus(dto.getAdminStatus());
         adminrepo.save(existingAdmin);
     }
+    public admin findById(Integer id) {
+        return adminrepo.findById(id).orElse(null);
+    }
 }
