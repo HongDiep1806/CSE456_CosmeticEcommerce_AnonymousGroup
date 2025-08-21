@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 
+import com.example.demo.service.AdminService;
 import com.example.demo.service.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -31,7 +32,7 @@ import jakarta.servlet.http.HttpSession;
 public class blogcontroller {
 
     @Autowired
-    adminrepository adminrepo;
+    AdminService adminService;
 
     @Autowired
     blogrepository blogrepo;
@@ -44,9 +45,9 @@ public class blogcontroller {
         Integer superId = (Integer) session.getAttribute("loginSuper");
 
         if (adminId != null) {
-            return adminrepo.findById(adminId).get().getAdminName();
+            return adminService.findById(adminId).getAdminName();
         } else if (superId != null) {
-            return adminrepo.findById(superId).get().getAdminName();
+            return adminService.findById(superId).getAdminName();
         } else {
             return null;
         }
