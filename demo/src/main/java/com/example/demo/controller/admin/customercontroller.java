@@ -1,88 +1,66 @@
 package com.example.demo.controller.admin;
 
-import java.util.List;
-
+import com.example.demo.model.customers;
+import com.example.demo.model.customersdto;
+import com.example.demo.repository.adminrepository;
+import com.example.demo.service.CustomerService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.example.demo.model.*;
-import com.example.demo.repository.*;
-
-import jakarta.servlet.http.HttpSession;
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
 public class customercontroller {
 
-    @Autowired
-    customerrepository customerrepo;
-
-    @Autowired
-    productrepository productrepo;
-
-    @Autowired
-    orderrepository orderrepo;
-
-    @Autowired
-    adminrepository adminrepo;
-
-    @Autowired
-    blogrepository blogrepo;
+    @Autowired private CustomerService customerService;
+    @Autowired private adminrepository adminrepo;
 
     @ModelAttribute("loggedInAdminName")
     public String getLoggedInAdminName(HttpSession session) {
         Integer adminId = (Integer) session.getAttribute("loginAdmin");
         Integer superId = (Integer) session.getAttribute("loginSuper");
-
-        if (adminId != null) {
-            return adminrepo.findById(adminId).get().getAdminName();
-        } else if (superId != null) {
-            return adminrepo.findById(superId).get().getAdminName();
-        } else {
-            return null;
-        }
+        if (adminId != null) return adminrepo.findById(adminId).get().getAdminName();
+        if (superId != null) return adminrepo.findById(superId).get().getAdminName();
+        return null;
     }
 
+    private boolean isLoggedIn(HttpSession session) {
+        return session.getAttribute("loginAdmin") != null || session.getAttribute("loginSuper") != null;
+    }
+
+    // ===== LIST CUSTOMERS =====
     @GetMapping("apps-ecommerce-customers")
     public String customers(Model model, RedirectAttributes redirectAttributes, HttpSession session) {
-        Integer adminId = (Integer) session.getAttribute("loginAdmin");
-        Integer superId = (Integer) session.getAttribute("loginSuper");
-
-        if (adminId == null && superId == null) {
+        if (!isLoggedIn(session)) {
             redirectAttributes.addFlashAttribute("loginRequired", "Please log in to view this page.");
             return "redirect:/admin/auth-signin-basic";
         }
-
-        List<customers> customers = (List<customers>) customerrepo.findAll();
+        List<customers> customers = customerService.getAllCustomers();
         model.addAttribute("customers", customers);
-        return ("admin/apps-ecommerce-customers");
+        return "admin/apps-ecommerce-customers";
     }
 
+    // ===== UPDATE CUSTOMER STATUS =====
     @PostMapping("/editCustomer")
-    public String editCustomer(@ModelAttribute("customersdto") customersdto customersdto, BindingResult result) {
-        if (result.hasErrors()) {
-            return "admin/apps-ecommerce-customers";
+    public String editCustomer(@ModelAttribute("customersdto") customersdto customersdto,
+                               BindingResult result,
+                               RedirectAttributes redirectAttributes) {
+        boolean ok = customerService.updateCustomerStatus(customersdto, result);
+        if (!ok || result.hasErrors()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Cannot update customer.");
         }
-        Integer customerId = customersdto.getCustomerId();
-        customers existingCustomer = customerrepo.findById(customerId).orElse(null);
-        if (existingCustomer == null) {
-            result.addError(new FieldError("customersdto", "CustomerId", "Customer not found!"));
-            return "admin/apps-ecommerce-customers";
-        }
-        existingCustomer.setCustomerStatus(customersdto.getCustomerStatus());
-        customerrepo.save(existingCustomer);
-
         return "redirect:/admin/apps-ecommerce-customers";
     }
 
+    // ===== PROFILE SETTINGS (static page) =====
     @GetMapping("pages-profile-settings")
     public String setting() {
-        return ("admin/pages-profile-settings");
+        return "admin/pages-profile-settings";
     }
-
 }
