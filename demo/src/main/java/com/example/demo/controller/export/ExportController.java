@@ -20,57 +20,57 @@ public class ExportController {
     private ExportCSVService exportService;
 
     @Autowired
-    private customerrepository customerrepo;
+    private CustomerRepository customerrepo;
 
     @Autowired
-    private productrepository productrepo;
+    private ProductRepository productrepo;
 
     @Autowired
-    private categoriesrepository caterepo;
+    private CategoriesRepository caterepo;
 
     @Autowired
-    private blogrepository blogrepo;
+    private BlogRepository blogrepo;
 
     @Autowired
-    private adminrepository adminrepo;
+    private AdminRepository adminrepo;
 
     @Autowired
-    private orderrepository orderrepo;
+    private OrderRepository orderrepo;
 
     @GetMapping("/export/customers/csv")
     public void exportCSVcustomer(HttpServletResponse response) throws IOException {
-        List<customers> customers = (List<customers>) customerrepo.findAll();
+        List<Customers> customers = (List<Customers>) customerrepo.findAll();
         exportService.exportToCSVforcustomer(response, customers);
     }
 
 
     @GetMapping("/export/products/csv")
     public void exportCSVproduct(HttpServletResponse response) throws IOException {
-        List<products> pro = (List<products>) productrepo.findAll();
+        List<Products> pro = (List<Products>) productrepo.findAll();
         exportService.exportToCSVforproduct(response, pro);
     }
 
     @GetMapping("/export/categories/csv")
     public void exportCSVcategory(HttpServletResponse response) throws IOException {
-        List<categories> cate = (List<categories>) caterepo.findAll();
+        List<Categories> cate = (List<Categories>) caterepo.findAll();
         exportService.exportToCSVforcategory(response, cate);
     }
 
     @GetMapping("/export/blogs/csv")
     public void exportCSVblog(HttpServletResponse response) throws IOException {
-        List<blogs> bl = (List<blogs>) blogrepo.findAll();
+        List<Blogs> bl = (List<Blogs>) blogrepo.findAll();
         exportService.exportToCSVforblog(response, bl);
     }
 
     @GetMapping("/export/admins/csv")
     public void exportCSVadmin(HttpServletResponse response) throws IOException {
-        List<admin> ad = (List<admin>) adminrepo.findAll();
+        List<Admin> ad = (List<Admin>) adminrepo.findAll();
         exportService.exportToCSVforadmin(response, ad);
     }
 
     @GetMapping("/export/orders/csv")
     public void exportCSVorder(HttpServletResponse response) throws IOException {
-        List<orders> od = (List<orders>) orderrepo.findAll();
+        List<Orders> od = (List<Orders>) orderrepo.findAll();
         exportService.exportToCSVfororder(response, od);
     }
 }

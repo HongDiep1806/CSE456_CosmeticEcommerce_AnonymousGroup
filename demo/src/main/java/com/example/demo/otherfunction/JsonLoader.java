@@ -13,31 +13,31 @@ import java.util.List;
 @Service
 public class JsonLoader {
 
-    private List<provinces> provinceList;
+    private List<Provinces> provinceList;
 
     public JsonLoader() throws IOException {
         this.provinceList = loadProvinces();
     }
 
-    public List<provinces> loadProvinces() throws IOException {
+    public List<Provinces> loadProvinces() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         InputStream inputStream = getClass().getResourceAsStream("/static/provinces/db.json");
         JsonNode root = objectMapper.readTree(inputStream);
-        List<provinces> provinces = new ArrayList<>();
+        List<Provinces> provinces = new ArrayList<>();
         for (JsonNode node : root.path("province")) {
-            provinces province = objectMapper.treeToValue(node, provinces.class);
+            Provinces province = objectMapper.treeToValue(node, Provinces.class);
             provinces.add(province);
         }
         return provinces;
     }
 
-    public List<districts> loadDistricts(String provinceId) throws IOException {
+    public List<Districts> loadDistricts(String provinceId) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         InputStream inputStream = getClass().getResourceAsStream("/static/provinces/db.json");
         JsonNode root = objectMapper.readTree(inputStream);
-        List<districts> districts = new ArrayList<>();
+        List<Districts> districts = new ArrayList<>();
         for (JsonNode node : root.path("district")) {
-            districts district = objectMapper.treeToValue(node, districts.class);
+            Districts district = objectMapper.treeToValue(node, Districts.class);
             if (district.getIdProvince().equals(provinceId)) {
                 districts.add(district);
             }
@@ -46,7 +46,7 @@ public class JsonLoader {
     }
 
     public String getProvinceNameById(String provinceId) {
-        for (provinces province : provinceList) {
+        for (Provinces province : provinceList) {
             if (province.getIdProvince().equals(provinceId)) {
                 return province.getName();
             }

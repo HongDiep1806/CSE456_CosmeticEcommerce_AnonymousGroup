@@ -2,7 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.model.*;
 import com.example.demo.otherfunction.JsonLoader;
-import com.example.demo.otherfunction.encryption;
+import com.example.demo.otherfunction.Encryption;
 import com.example.demo.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -20,14 +20,14 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
 
-    @Autowired private customerrepository customerrepo;
-    @Autowired private categoriesrepository caterepo;
-    @Autowired private productrepository productrepo;
-    @Autowired private productimagesrepository productimagerepo;
-    @Autowired private cartrepository cartrepo;
-    @Autowired private blogrepository blogrepo;
-    @Autowired private orderrepository orderrepo;
-    @Autowired private orderdetailrepository orderdetailsrepo;
+    @Autowired private CustomerRepository customerrepo;
+    @Autowired private CategoriesRepository caterepo;
+    @Autowired private ProductRepository productrepo;
+    @Autowired private ProductImagesRepository productimagerepo;
+    @Autowired private CartRepository cartrepo;
+    @Autowired private BlogRepository blogrepo;
+    @Autowired private OrderRepository orderrepo;
+    @Autowired private OrderDetailRepository orderdetailsrepo;
 
     @Autowired private JsonLoader jsonLoader;               // loader tỉnh/thành
     @Autowired private SendEmailService sendEmailService;   // gửi email reset
@@ -35,10 +35,10 @@ public class UserService {
     /* ======= Helpers chung ======= */
 
     public static class CartSummary {
-        public final List<cartsdto> items;
+        public final List<CartsDto> items;
         public final int count;
         public final double total;
-        public CartSummary(List<cartsdto> items, double total) {
+        public CartSummary(List<CartsDto> items, double total) {
             this.items = items;
             this.count = items.size();
             this.total = total;
@@ -47,15 +47,15 @@ public class UserService {
 
     public CartSummary buildCartSummary(Integer customerId) {
         if (customerId == null) return new CartSummary(new ArrayList<>(), 0.0);
-        List<carts> cartItems = cartrepo.findByCustomerId(customerId);
-        List<cartsdto> dtos = new ArrayList<>();
+        List<Carts> cartItems = cartrepo.findByCustomerId(customerId);
+        List<CartsDto> dtos = new ArrayList<>();
         double total = 0.0;
-        for (carts c : cartItems) {
-            products p = c.getProduct();
+        for (Carts c : cartItems) {
+            Products p = c.getProduct();
             if (p != null) {
                 double line = p.getProductPrice() * c.getQuantity();
                 total += line;
-                cartsdto dto = new cartsdto();
+                CartsDto dto = new CartsDto();
                 dto.setProductId(p.getProductId());
                 dto.setProductName(p.getProductName());
                 dto.setProductImage(p.getProductMainImage());
@@ -71,31 +71,31 @@ public class UserService {
     /* Home / Index */
 
     public void fillIndex(Model model) {
-        List<categories> categories = (List<categories>) caterepo.findAll();
+        List<Categories> categories = (List<Categories>) caterepo.findAll();
         model.addAttribute("categories", categories);
 
         Pageable top4 = PageRequest.of(0, 4);
-        List<products> productsTop = productrepo.findTop5Products(top4).stream()
+        List<Products> productsTop = productrepo.findTop5Products(top4).stream()
                 .filter(p -> !"block".equalsIgnoreCase(p.getProductStatus()))
                 .collect(Collectors.toList());
         model.addAttribute("products", productsTop);
-        List<products> best = productrepo.findBestProducts(top4).stream()
+        List<Products> best = productrepo.findBestProducts(top4).stream()
                 .filter(p -> !"block".equalsIgnoreCase(p.getProductStatus()))
                 .collect(Collectors.toList());
         model.addAttribute("products1", best);
 
         int defaultCategoryId = categories.isEmpty() ? 0 : categories.get(12).getCategoryId(); // giữ logic cũ
         int defaultCategoryId2 = categories.isEmpty() ? 0 : categories.get(7).getCategoryId();
-        List<products> toner = productrepo.findProductsByCategoryId(defaultCategoryId, top4).stream()
+        List<Products> toner = productrepo.findProductsByCategoryId(defaultCategoryId, top4).stream()
                 .filter(p -> !"block".equalsIgnoreCase(p.getProductStatus()))
                 .collect(Collectors.toList());
-        List<products> lipstick = productrepo.findProductsByCategoryId(defaultCategoryId2, top4).stream()
+        List<Products> lipstick = productrepo.findProductsByCategoryId(defaultCategoryId2, top4).stream()
                 .filter(p -> !"block".equalsIgnoreCase(p.getProductStatus()))
                 .collect(Collectors.toList());
         model.addAttribute("productsToner", toner);
         model.addAttribute("productsLipstick", lipstick);
 
-        List<blogs> blogs = ((List<blogs>) blogrepo.findAll()).stream()
+        List<Blogs> blogs = ((List<Blogs>) blogrepo.findAll()).stream()
                 .filter(b -> !"hidden".equalsIgnoreCase(b.getBlogStatus()))
                 .collect(Collectors.toList());
         model.addAttribute("blogs", blogs);
@@ -103,13 +103,13 @@ public class UserService {
 
     /* Auth / Register / Login / Forgot */
 
-    public customers prepareRegisterModel() {
-        customers c = new customers();
+    public Customers prepareRegisterModel() {
+        Customers c = new Customers();
         c.setCustomerId(customerrepo.findNextCustomerId());
         return c;
     }
 
-    public String register(customers customer, String confirmPassword, String cemail, Model model) {
+    public String register(Customers customer, String confirmPassword, String cemail, Model model) {
         if (customerrepo.findByCemail(cemail) != null) {
             model.addAttribute("error", "Email already exists.");
             return "user/register";
@@ -118,7 +118,7 @@ public class UserService {
             model.addAttribute("error", "Passwords do not match.");
             return "user/register";
         }
-        customer.setCustomerPassword(encryption.encrypt(customer.getCustomerPassword()));
+        customer.setCustomerPassword(Encryption.encrypt(customer.getCustomerPassword()));
         customer.setCustomerStatus("Active");
         customerrepo.save(customer);
         return "redirect:/user/login";
@@ -126,7 +126,7 @@ public class UserService {
 
     public ResponseEntity<Map<String, Object>> login(String email, String password, HttpSession session) {
         Map<String, Object> resp = new HashMap<>();
-        customers c = customerrepo.findByCemail(email);
+        Customers c = customerrepo.findByCemail(email);
         if (c == null) {
             resp.put("success", false);
             resp.put("message", "Invalid email or password.");
@@ -137,7 +137,7 @@ public class UserService {
             resp.put("message", "Your account is blocked. Please contact support.");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(resp);
         }
-        if (!encryption.matches(password, c.getCustomerPassword())) {
+        if (!Encryption.matches(password, c.getCustomerPassword())) {
             resp.put("success", false);
             resp.put("message", "Invalid email or password.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resp);
@@ -148,7 +148,7 @@ public class UserService {
     }
 
     public String sendResetCode(String cemail, HttpSession session, Model model) {
-        customers customer = customerrepo.findByCemail(cemail);
+        Customers customer = customerrepo.findByCemail(cemail);
         if (customer == null) {
             model.addAttribute("error", "Email not found.");
             return "user/forgot-password";
@@ -172,14 +172,14 @@ public class UserService {
 
     public String resetPasswordFromVerify(String newPassword, String confirmPassword, HttpSession session, Model model) {
         Integer customerId = (Integer) session.getAttribute("customerId");
-        customers customer = customerrepo.findById(customerId).orElse(null);
+        Customers customer = customerrepo.findById(customerId).orElse(null);
         if (customer == null) return "redirect:/user/login";
 
         if (!Objects.equals(newPassword, confirmPassword)) {
             model.addAttribute("error", "Passwords do not match.");
             return "user/reset-password";
         }
-        customer.setCustomerPassword(encryption.encrypt(newPassword));
+        customer.setCustomerPassword(Encryption.encrypt(newPassword));
         customerrepo.save(customer);
         return "redirect:/user/login";
     }
@@ -205,11 +205,11 @@ public class UserService {
         if (customerId == null) {
             return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("/user/login")).build();
         }
-        customers customer = customerrepo.findById(customerId).orElse(null);
+        Customers customer = customerrepo.findById(customerId).orElse(null);
         if (customer == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Customer not found."));
         }
-        products product = productrepo.findById(productId).orElse(null);
+        Products product = productrepo.findById(productId).orElse(null);
         if (product == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Product not found."));
         }
@@ -218,7 +218,7 @@ public class UserService {
                     .body(Map.of("message", "Requested quantity exceeds available stock. Available: " + product.getProductQuantity()));
         }
 
-        carts existing = cartrepo.findByCustomerIdAndProductId(customerId, productId);
+        Carts existing = cartrepo.findByCustomerIdAndProductId(customerId, productId);
         if (existing != null) {
             int newQty = existing.getQuantity() + quantity;
             if (newQty > product.getProductQuantity()) {
@@ -228,7 +228,7 @@ public class UserService {
             existing.setQuantity(newQty);
             cartrepo.save(existing);
         } else {
-            carts c = new carts();
+            Carts c = new Carts();
             c.setId(new CartId(customerId, productId));
             c.setCustomer(customer);
             c.setProduct(product);
@@ -249,9 +249,9 @@ public class UserService {
             ra.addFlashAttribute("loginRequired", "Please log in to update your cart.");
             return "redirect:/user/login";
         }
-        List<carts> cartItems = cartrepo.findByCustomerId(customerId);
+        List<Carts> cartItems = cartrepo.findByCustomerId(customerId);
         boolean exceeded = false;
-        for (carts item : cartItems) {
+        for (Carts item : cartItems) {
             String key = "quantity-" + item.getProduct().getProductId();
             String val = params.get(key);
             if (val != null) {
@@ -277,11 +277,11 @@ public class UserService {
         Integer customerId = (Integer) session.getAttribute("loginCustomer");
         if (customerId == null) return "redirect:/user/login";
 
-        customers customer = customerrepo.findById(customerId).orElse(null);
+        Customers customer = customerrepo.findById(customerId).orElse(null);
         if (customer == null) return "redirect:/user/login";
         model.addAttribute("customers", customer);
 
-        List<carts> cartItems = cartrepo.findByCustomerId(customerId);
+        List<Carts> cartItems = cartrepo.findByCustomerId(customerId);
         if (cartItems.isEmpty()) {
             model.addAttribute("emptyCart", true);
             model.addAttribute("checkoutSuccess", false);
@@ -289,8 +289,8 @@ public class UserService {
         }
 
         CartSummary summary = buildCartSummary(customerId);
-        List<cartsdto> checkoutItems = summary.items.stream().map(i -> {
-            cartsdto dto = new cartsdto();
+        List<CartsDto> checkoutItems = summary.items.stream().map(i -> {
+            CartsDto dto = new CartsDto();
             dto.setProductName(i.getProductName());
             dto.setQuantity(i.getQuantity());
             dto.setTotalPrice(i.getTotalPrice());
@@ -311,7 +311,7 @@ public class UserService {
         return "user/checkout";
     }
 
-    public List<districts> getDistricts(String provinceId) {
+    public List<Districts> getDistricts(String provinceId) {
         try {
             return jsonLoader.loadDistricts(provinceId);
         } catch (Exception e) {
@@ -324,21 +324,21 @@ public class UserService {
         Integer customerId = (Integer) session.getAttribute("loginCustomer");
         if (customerId == null) return "redirect:/user/login";
 
-        List<carts> cartItems = cartrepo.findByCustomerId(customerId);
+        List<Carts> cartItems = cartrepo.findByCustomerId(customerId);
         if (cartItems.isEmpty()) {
             session.setAttribute("emptyCart", true);
             return "redirect:/user/checkout";
         }
 
         double total = 0.0;
-        for (carts c : cartItems) {
-            products p = c.getProduct();
+        for (Carts c : cartItems) {
+            Products p = c.getProduct();
             if (p != null) total += p.getProductPrice() * c.getQuantity();
         }
 
         String provinceName = jsonLoader.getProvinceNameById(provinceId);
 
-        orders order = new orders();
+        Orders order = new Orders();
         order.setCustomer(customerrepo.findById(customerId).orElse(null));
         order.setOrderDate(new java.sql.Date(new java.util.Date().getTime()));
         order.setOrderStatus("Pending");
@@ -350,10 +350,10 @@ public class UserService {
         order.setOrderProvince(provinceName);
         orderrepo.save(order);
 
-        for (carts c : cartItems) {
-            products p = c.getProduct();
+        for (Carts c : cartItems) {
+            Products p = c.getProduct();
             if (p != null) {
-                orderdetails od = new orderdetails();
+                OrderDetails od = new OrderDetails();
                 od.setOrder(order);
                 od.setProductId(p.getProductId());
                 od.setProductPrice(p.getProductPrice());
@@ -378,10 +378,10 @@ public class UserService {
         Integer customerId = (Integer) session.getAttribute("loginCustomer");
         if (customerId == null) return "redirect:/user/login";
 
-        List<orders> orders = orderrepo.findOrdersByCustomerId(customerId);
+        List<Orders> orders = orderrepo.findOrdersByCustomerId(customerId);
         model.addAttribute("orders", orders);
 
-        customers customer = customerrepo.findById(customerId).orElse(null);
+        Customers customer = customerrepo.findById(customerId).orElse(null);
         model.addAttribute("customer", customer);
 
         try {
@@ -394,9 +394,9 @@ public class UserService {
     }
 
     public String updateAccount(Integer customerId, String newPassword, String confirmPassword,
-                                String provinceId, String city, customers updated, Model model) {
+                                String provinceId, String city, Customers updated, Model model) {
         if (customerId == null) return "redirect:/user/login";
-        customers c = customerrepo.findById(customerId).orElse(null);
+        Customers c = customerrepo.findById(customerId).orElse(null);
         if (c == null) return "redirect:/user/login";
 
         c.setCustomerName(updated.getCustomerName());
@@ -412,7 +412,7 @@ public class UserService {
                 model.addAttribute("error", "Passwords do not match!");
                 // vẫn lưu các field khác
             } else {
-                c.setCustomerPassword(encryption.encrypt(newPassword));
+                c.setCustomerPassword(Encryption.encrypt(newPassword));
             }
         }
         customerrepo.save(c);
@@ -422,15 +422,15 @@ public class UserService {
     public String orderDetails(int id, HttpSession session, Model model) {
         Integer customerId = (Integer) session.getAttribute("loginCustomer");
         if (customerId == null) return "redirect:/user/login";
-        orders order = orderrepo.findById(id).orElse(null);
+        Orders order = orderrepo.findById(id).orElse(null);
         if (order == null) return "redirect:/user/my-account";
 
-        List<orderdetails> list = orderdetailsrepo.findByOrderId(id);
-        List<orderdetailsdto> dtos = new ArrayList<>();
-        for (orderdetails d : list) {
-            products p = productrepo.findById(d.getProductId()).orElse(null);
+        List<OrderDetails> list = orderdetailsrepo.findByOrderId(id);
+        List<OrderDetailsDto> dtos = new ArrayList<>();
+        for (OrderDetails d : list) {
+            Products p = productrepo.findById(d.getProductId()).orElse(null);
             if (p != null) {
-                orderdetailsdto dto = new orderdetailsdto();
+                OrderDetailsDto dto = new OrderDetailsDto();
                 dto.setProductId(p.getProductId());
                 dto.setProductName(p.getProductName());
                 dto.setProductMainImage(p.getProductMainImage());
@@ -449,8 +449,8 @@ public class UserService {
     /* Blogs / Products / Shop */
 
     public void fillBlogDetail(int id, Model model) {
-        blogs blog = blogrepo.findById(id).orElse(null);
-        List<blogs> recent = blogrepo.findTop3ByIdNot(id);
+        Blogs blog = blogrepo.findById(id).orElse(null);
+        List<Blogs> recent = blogrepo.findTop3ByIdNot(id);
         model.addAttribute("blogs", blog);
         model.addAttribute("recentBlogs", recent);
     }
@@ -458,8 +458,8 @@ public class UserService {
     public void fillBlogList(int page, Model model) {
         int size = 9;
         Pageable pageable = PageRequest.of(page, size);
-        Page<blogs> blogPage = blogrepo.findAll(pageable);
-        List<blogs> visible = blogPage.getContent().stream()
+        Page<Blogs> blogPage = blogrepo.findAll(pageable);
+        List<Blogs> visible = blogPage.getContent().stream()
                 .filter(b -> !"hidden".equalsIgnoreCase(b.getBlogStatus()))
                 .collect(Collectors.toList());
         model.addAttribute("blogs", visible);
@@ -468,12 +468,12 @@ public class UserService {
     }
 
     public void fillProductDetail(int id, Model model) {
-        products p = productrepo.findById(id).orElse(null);
-        List<productotherimages> gallery = productimagerepo.findByProduct(p);
+        Products p = productrepo.findById(id).orElse(null);
+        List<ProductOtherImages> gallery = productimagerepo.findByProduct(p);
         List<String> galleryUrls = gallery.stream()
                 .map(i -> "/productimages/" + i.getProductImage())
                 .collect(Collectors.toList());
-        List<products> related = productrepo.findProductsByCategoryExcludingId(
+        List<Products> related = productrepo.findProductsByCategoryExcludingId(
                 p.getProductCategory(), p.getProductId());
         model.addAttribute("products", p);
         model.addAttribute("galleryImageUrls", galleryUrls);
@@ -482,12 +482,12 @@ public class UserService {
 
     public void fillShop(String categoryName, Double minPrice, Double maxPrice, int page, Model model) {
         int size = 8;
-        List<categories> categories = (List<categories>) caterepo.findAll();
+        List<Categories> categories = (List<Categories>) caterepo.findAll();
         model.addAttribute("categories", categories);
 
         Pageable byIdDesc = PageRequest.of(page, size, Sort.by("ProductId").descending());
         Pageable byPriceDescBig = PageRequest.of(page, 100, Sort.by("ProductPrice").descending());
-        Page<products> productPage;
+        Page<Products> productPage;
 
         if (minPrice != null && maxPrice != null) {
             if (categoryName != null && !categoryName.isEmpty()) {

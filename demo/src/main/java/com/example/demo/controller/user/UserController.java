@@ -1,13 +1,12 @@
 package com.example.demo.controller.user;
 
-import com.example.demo.model.customers;
-import com.example.demo.model.districts;
+import com.example.demo.model.Customers;
+import com.example.demo.model.Districts;
 import com.example.demo.service.UserService;
 import com.example.demo.service.UserService.CartSummary;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +44,7 @@ public class UserController {
     }
 
     @PostMapping("/register/save")
-    public String saveCustomer(@ModelAttribute customers customer,
+    public String saveCustomer(@ModelAttribute Customers customer,
                                @RequestParam("confirmPassword") String confirmPassword,
                                @RequestParam("cemail") String cemail,
                                Model model) {
@@ -159,7 +158,7 @@ public class UserController {
 
     @GetMapping("/districts/{provinceId}")
     @ResponseBody
-    public List<districts> getDistricts(@PathVariable String provinceId) {
+    public List<Districts> getDistricts(@PathVariable String provinceId) {
         return userService.getDistricts(provinceId);
     }
 
@@ -193,7 +192,7 @@ public class UserController {
                                 @RequestParam("confirmPassword") String confirmPassword,
                                 @RequestParam(value = "orderProvince", required = false) String province,
                                 @RequestParam(value = "orderCity", required = false) String city,
-                                @ModelAttribute("customer") customers updatedCustomer,
+                                @ModelAttribute("customer") Customers updatedCustomer,
                                 HttpSession session, Model model) {
         Integer customerId = (Integer) session.getAttribute("loginCustomer");
         return userService.updateAccount(customerId, newPassword, confirmPassword, province, city, updatedCustomer, model);

@@ -11,9 +11,9 @@ import java.util.List;
 @Service
 public class ExportCSVService {
 
-    public void exportToCSVforcustomer(HttpServletResponse response, List<customers> customers) throws IOException {
+    public void exportToCSVforcustomer(HttpServletResponse response, List<Customers> customers) throws IOException {
         response.setContentType("text/csv");
-        response.setHeader("Content-Disposition", "attachment; filename=\"customers.csv\"");
+        response.setHeader("Content-Disposition", "attachment; filename=\"Customers.csv\"");
 
         PrintWriter writer = response.getWriter();
 
@@ -21,7 +21,7 @@ public class ExportCSVService {
         writer.println("Customer ID,Name,Email,Phone,Address,City,Province");
 
         // Write data rows
-        for (customers customer : customers) {
+        for (Customers customer : customers) {
             writer.printf("%d,%s,%s,%s,%s,%s,%s%n",
                     customer.getCustomerId(),
                     customer.getCustomerName(),
@@ -36,9 +36,9 @@ public class ExportCSVService {
         writer.close();
     }
 
-    public void exportToCSVforproduct(HttpServletResponse response, List<products> product) throws IOException {
+    public void exportToCSVforproduct(HttpServletResponse response, List<Products> product) throws IOException {
         response.setContentType("text/csv");
-        response.setHeader("Content-Disposition", "attachment; filename=\"products.csv\"");
+        response.setHeader("Content-Disposition", "attachment; filename=\"Products.csv\"");
 
         PrintWriter writer = response.getWriter();
 
@@ -46,7 +46,7 @@ public class ExportCSVService {
         writer.println("Product ID,Name,Category,Description,Price,Quantity");
 
         // Write data rows
-        for (products pro : product) {
+        for (Products pro : product) {
             writer.printf("%d,%s,%s,%s,%s,%s%n",
                     pro.getProductId(),
                     pro.getProductName(),
@@ -60,9 +60,9 @@ public class ExportCSVService {
         writer.close();
     }
 
-    public void exportToCSVforcategory(HttpServletResponse response, List<categories> categories) throws IOException {
+    public void exportToCSVforcategory(HttpServletResponse response, List<Categories> categories) throws IOException {
         response.setContentType("text/csv");
-        response.setHeader("Content-Disposition", "attachment; filename=\"categories.csv\"");
+        response.setHeader("Content-Disposition", "attachment; filename=\"Categories.csv\"");
 
         PrintWriter writer = response.getWriter();
 
@@ -70,7 +70,7 @@ public class ExportCSVService {
         writer.println("Category ID,Name,Quantity");
 
         // Write data rows
-        for (categories cate : categories) {
+        for (Categories cate : categories) {
             writer.printf("%d,%s,%s%n",
                     cate.getCategoryId(), cate.getCategoryName(), cate.getCategoryQuantity());
         }
@@ -79,9 +79,9 @@ public class ExportCSVService {
         writer.close();
     }
 
-    public void exportToCSVforblog(HttpServletResponse response, List<blogs> blog) throws IOException {
+    public void exportToCSVforblog(HttpServletResponse response, List<Blogs> blog) throws IOException {
         response.setContentType("text/csv");
-        response.setHeader("Content-Disposition", "attachment; filename=\"blogs.csv\"");
+        response.setHeader("Content-Disposition", "attachment; filename=\"Blogs.csv\"");
 
         PrintWriter writer = response.getWriter();
 
@@ -89,7 +89,7 @@ public class ExportCSVService {
         writer.println("Blog ID,Title, Description, Created Date, Post By, Tag");
 
         // Write data rows
-        for (blogs bl : blog) {
+        for (Blogs bl : blog) {
             writer.printf("%d,%s,%s,%s,%s,%s%n",
                     bl.getBlogId(),
                     bl.getBlogTitle(),
@@ -103,7 +103,7 @@ public class ExportCSVService {
         writer.close();
     }
 
-    public void exportToCSVforadmin(HttpServletResponse response, List<admin> admin) throws IOException {
+    public void exportToCSVforadmin(HttpServletResponse response, List<Admin> admin) throws IOException {
         response.setContentType("text/csv");
         response.setHeader("Content-Disposition", "attachment; filename=\"admins.csv\"");
 
@@ -113,7 +113,7 @@ public class ExportCSVService {
         writer.println("Admin ID,Admin Email, Admin Name, Admin Address, Admin City, Admin Province, Admin Phone");
 
         // Write data rows
-        for (admin ad : admin) {
+        for (Admin ad : admin) {
             writer.printf("%d,%s,%s,%s,%s,%s,%s%n",
                     ad.getAdminId(),
                     ad.getAdminEmail(),
@@ -129,9 +129,9 @@ public class ExportCSVService {
     }
 
 
-    public void exportToCSVfororder(HttpServletResponse response, List<orders> order) throws IOException {
+    public void exportToCSVfororder(HttpServletResponse response, List<Orders> order) throws IOException {
         response.setContentType("text/csv");
-        response.setHeader("Content-Disposition", "attachment; filename=\"orders.csv\"");
+        response.setHeader("Content-Disposition", "attachment; filename=\"Orders.csv\"");
 
         PrintWriter writer = response.getWriter();
 
@@ -139,7 +139,7 @@ public class ExportCSVService {
         writer.println("Order ID,Customer Name, Order Date, Address, City, Province, Note, Payment Method, Total Price");
 
         // Write data rows
-        for (orders od : order) {
+        for (Orders od : order) {
             writer.printf("%d,%s,%s,%s,%s,%s,%s,%s,%s%n",
                     od.getOrderId(),
                     od.getCustomer().getCustomerName(),
