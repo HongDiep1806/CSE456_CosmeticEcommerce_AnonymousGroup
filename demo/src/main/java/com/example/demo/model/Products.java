@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Date;
@@ -8,6 +9,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "product")
+@Data
 public class Products {
 
     @Id

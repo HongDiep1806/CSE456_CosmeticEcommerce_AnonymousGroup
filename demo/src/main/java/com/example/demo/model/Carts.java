@@ -1,10 +1,13 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
+
 import java.io.Serializable;
 
 @Entity
 @Table(name = "cart")
+@Data
 public class Carts implements Serializable {
 
     @EmbeddedId

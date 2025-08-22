@@ -2,12 +2,14 @@ package com.example.demo.model;
 
 import java.sql.Date;
 
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "Blogs")
+@Data
 public class Blogs {
 
     @Id
